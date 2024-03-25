@@ -6,13 +6,10 @@ import { toast } from "react-toastify";
 import { useMutation } from "@tanstack/react-query";
 import { Input } from "./CommonTag";
 import { SectionCol } from "./SectionDirection";
+import { User } from "../interfaces/IUser";
 
 interface LoginTitleProps {
   $social?: boolean;
-}
-interface User {
-  email: string;
-  password: string;
 }
 
 const loginSchema = yup.object({
