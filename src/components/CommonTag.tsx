@@ -13,6 +13,8 @@ const Input = styled.input`
   &:focus {
     border: 0.1rem solid black;
   }
+
+  ${({ disabled, theme }) => disabled && `background-color: ${theme.darkgray}`}
 `;
 const Button = styled.input`
   cursor: pointer;
@@ -22,5 +24,11 @@ const Button = styled.input`
   border-radius: 1.5rem;
   font-weight: 900;
 `;
+const Label = styled.label`
+  font-size: 1.8rem;
+  font-weight: 900;
+  flex-basis: 20rem;
+  flex-shrink: 0;
+`;
 
-export { Input, Button };
+export { Input, Button, Label };
