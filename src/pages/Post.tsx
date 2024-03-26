@@ -1,109 +1,104 @@
-import React, { useRef, useState } from "react";
 import styled from "styled-components";
-import { SectionCol, SectionRow } from "../components/SectionDirection";
-import { Input } from "../components/CommonTag";
-import ImageFiles from "../components/ImageFiles";
+import { Section, SectionRow } from "../components/SectionDirection";
+import { Input, Label } from "../components/CommonTag";
+import ImageFiles from "../components/post/ImageFiles";
+import CategoryInput from "../components/post/CategoryInput";
+import TeamInput from "../components/post/TeamInput";
+import { PostFormData } from "../interfaces/IPostFormData";
+import { useState } from "react";
 
 const Post = () => {
-  const categoryRef = useRef<HTMLInputElement>(null);
-  const [categories, setCategories] = useState<string[]>([]);
-  const [teamProj, setTeamProj] = useState<boolean>(true);
+  const [formData, setFormData] = useState<PostFormData>({
+    title: "",
+    description: "",
+    githubLink: "",
+    teamProjectMembers: [],
+    projectImgs: [],
+  });
 
-  function onClearInput() {
-    if (categoryRef.current) categoryRef.current.value = "";
-  }
+  const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      title: event.target.value,
+    }));
+  };
 
-  function handleSelect(e: React.MouseEvent<HTMLInputElement>) {
-    const value = (e.target as HTMLInputElement).value;
-    setTeamProj(Boolean(value));
-  }
+  const handleDescriptionChange = (
+    event: React.ChangeEvent<HTMLTextAreaElement>
+  ) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      description: event.target.value,
+    }));
+  };
 
-  function handleOnKeyPress(e: React.KeyboardEvent) {
-    if (
-      e.key === "Enter" &&
-      categoryRef.current &&
-      categoryRef.current.value !== ""
-    ) {
-      e.preventDefault();
-      setCategories([...categories, categoryRef.current.value]);
-      onClearInput();
+  const handleGithubLinkChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      githubLink: event.target.value,
+    }));
+  };
+
+  const handleImageChange = (newFiles: File[]) => {
+    const formData = new FormData();
+    if (newFiles) {
+      // formData.append("file", newFiles);
     }
-  }
 
-  function handleRemoveCategory(category: string) {
-    setCategories(categories.filter((c) => c !== category));
-  }
+    setFormData((prevData) => ({
+      ...prevData,
+      projectImgs: newFiles,
+    }));
+  };
+  const handleSubmit = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    console.log(formData);
+  };
 
   return (
     <PostContainer>
       <PostForm>
         <PostContent>
-          <PostTitle placeholder="프로젝트 제목을 입력하세요." />
-          <PostDiscription placeholder="프로젝트에 대한 설명을 입력하세요." />
+          <PostTitle
+            id="title"
+            type="text"
+            onChange={handleTitleChange}
+            placeholder="프로젝트 제목을 입력하세요."
+          />
+          <PostDescription
+            id="description"
+            onChange={handleDescriptionChange}
+            placeholder="프로젝트에 대한 설명을 입력하세요."
+          />
           <div>
             <Section>
               <Label>이미지</Label>
-              <ImageFiles></ImageFiles>
+              <ImageFiles
+                onFilesChange={(newFiles: File[]) =>
+                  handleImageChange(newFiles)
+                }
+              />
             </Section>
-            <Section>
-              <Label>프로젝트 유형</Label>
-              <SectionRow>
-                <TeamButton
-                  id="select1"
-                  name="type"
-                  type="radio"
-                  value="true"
-                  onClick={handleSelect}
-                  defaultChecked={teamProj}
-                />
-                <label htmlFor="select1">팀</label>
-                <TeamButton
-                  id="select2"
-                  name="type"
-                  type="radio"
-                  onClick={handleSelect}
-                  value="false"
-                />
-                <label htmlFor="select2">개인</label>
-                <Input placeholder="팀원을 추가해주세요." type="text" />
-              </SectionRow>
-            </Section>
-            <Section>
-              <Label>카테고리</Label>
-              <SectionCol>
-                <Input
-                  type="text"
-                  placeholder="카테고리를 입력하고 ENTER을 눌러주세요."
-                  onKeyDown={handleOnKeyPress}
-                  ref={categoryRef}
-                />
-                <Categories>
-                  {categories.length === 0
-                    ? "입력된 카테고리가 없습니다"
-                    : categories.map((category) => {
-                        return (
-                          <Category key={category}>
-                            <span>{category}</span>
-                            <DeleteCateory
-                              onClick={() => handleRemoveCategory(category)}
-                            >
-                              x
-                            </DeleteCateory>
-                          </Category>
-                        );
-                      })}
-                </Categories>
-              </SectionCol>
-            </Section>
+            <CategoryInput />
+            <TeamInput />
             <Section>
               <Label>GITHUB</Label>
               <SectionRow>
-                <Input placeholder="https://github.com/..." type="text" />
+                <Input
+                  id="githubLink"
+                  type="text"
+                  onChange={handleGithubLinkChange}
+                  placeholder="https://github.com/..."
+                />
               </SectionRow>
             </Section>
           </div>
         </PostContent>
-        <PostButton>게시하기</PostButton>
+        <PostButton type="submit" onClick={handleSubmit}>
+          게시하기
+        </PostButton>
       </PostForm>
     </PostContainer>
   );
@@ -132,7 +127,6 @@ const PostContent = styled.div`
     }
   }
 `;
-
 const PostTitle = styled.input`
   width: 100%;
   border: none;
@@ -150,7 +144,7 @@ const PostTitle = styled.input`
     border-color: black;
   }
 `;
-const PostDiscription = styled.textarea`
+const PostDescription = styled.textarea`
   width: 100%;
   height: 57.9rem;
   border: 1px solid ${({ theme }) => theme.darkgray};
@@ -161,64 +155,6 @@ const PostDiscription = styled.textarea`
   resize: none;
   outline: none;
 `;
-
-const Section = styled.div`
-  display: flex;
-  justify-content: space-between;
-
-  &:not(:last-child) {
-    margin-bottom: 2.7rem;
-  }
-`;
-
-const Label = styled.label`
-  font-size: 1.8rem;
-  font-weight: 900;
-  flex-basis: 20rem;
-  flex-shrink: 0;
-`;
-
-const TeamButton = styled.input`
-  display: none;
-
-  & + label {
-    font-size: 1.2rem;
-    font-weight: 900;
-    text-align: center;
-    line-height: 4.5rem;
-    flex-basis: 10rem;
-    margin-right: 1rem;
-    border: 1px solid ${({ theme }) => theme.mainGreen};
-    border-radius: 1.5rem;
-  }
-  &[type="radio"]:checked + label {
-    background-color: ${({ theme }) => theme.mainGreen};
-    color: white;
-  }
-`;
-const Categories = styled.p`
-  display: flex;
-  align-items: center;
-  margin-top: 0.5rem;
-  height: 3rem;
-`;
-const Category = styled.div`
-  display: inline-block;
-  height: 2.8rem;
-  border-radius: 2rem;
-  margin-right: 0.8rem;
-  padding: 0.5rem 1.5rem;
-  border: 1px solid ${({ theme }) => theme.darkgry};
-  line-height: 1.5rem;
-`;
-
-const DeleteCateory = styled.span`
-  margin-left: 1rem;
-  font-weight: bold;
-  cursor: pointer;
-  font-size: 1.2rem;
-`;
-
 const PostButton = styled.button`
   width: 100%;
   border-radius: 2.5rem;
