@@ -1,10 +1,11 @@
-import React, { useRef, useState } from "react";
-import { SectionCol, SectionRow } from "./SectionDirection";
-import { Button, Input } from "./CommonTag";
+import React, { useEffect, useRef, useState } from "react";
+import { SectionCol, SectionRow } from "../SectionDirection";
+import { Button, Input } from "../CommonTag";
 import styled from "styled-components";
 import ImagePreview from "./ImagePreview";
 
-type Props = {};
+type Props = { onFilesChange: (files: File[]) => void };
+
 const ALLOW_FILE_EXTENSION = "jpg,jpeg,png";
 const FILE_SIZE_MAX_LIMIT = 5 * 1024 * 1024; // 5MB
 const MAX_FILE_NAME_VIEW = 5;
@@ -35,7 +36,7 @@ const renderFileNames = (validFiles: File[]) => {
     .join(", ")}외 ${validFiles.length - MAX_FILE_NAME_VIEW}개`;
 };
 
-const ImageFiles = (props: Props) => {
+const ImageFiles = ({ onFilesChange }: Props) => {
   const imageInputRef = useRef<HTMLInputElement>(null);
   const [fileName, setFileName] = useState<string>("");
   const [files, setFiles] = useState<File[] | null>(null);
@@ -78,6 +79,10 @@ const ImageFiles = (props: Props) => {
     setFiles(null);
   }
 
+  useEffect(() => {
+    if (files) onFilesChange(files);
+  }, [files, onFilesChange]);
+
   return (
     <SectionCol>
       <SectionRow>
@@ -90,7 +95,7 @@ const ImageFiles = (props: Props) => {
         <ImageInput
           type="file"
           accept="image/*"
-          required
+          name="upload_image"
           multiple
           ref={imageInputRef}
           onChange={handleUpload}
