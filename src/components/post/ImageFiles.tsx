@@ -81,7 +81,7 @@ const ImageFiles = ({ onFilesChange }: Props) => {
 
   useEffect(() => {
     if (files) onFilesChange(files);
-  }, [files, onFilesChange]);
+  }, [files]);
 
   return (
     <SectionCol>

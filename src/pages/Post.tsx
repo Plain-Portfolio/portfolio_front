@@ -1,17 +1,21 @@
 import styled from "styled-components";
 import { Section, SectionRow } from "../components/SectionDirection";
-import { Input, Label } from "../components/CommonTag";
+import { Container, Input, Label } from "../components/CommonTag";
 import ImageFiles from "../components/post/ImageFiles";
 import CategoryInput from "../components/post/CategoryInput";
 import TeamInput from "../components/post/TeamInput";
 import { PostFormData } from "../interfaces/IPostFormData";
 import { useState } from "react";
+import axios from "axios";
 
 const Post = () => {
   const [formData, setFormData] = useState<PostFormData>({
     title: "",
     description: "",
     githubLink: "",
+    isTeamProject: true,
+    ownerId: 0,
+    projectCategories: [],
     teamProjectMembers: [],
     projectImgs: [],
   });
@@ -42,19 +46,56 @@ const Post = () => {
   };
 
   const handleImageChange = (newFiles: File[]) => {
-    const formData = new FormData();
-    if (newFiles) {
-      // formData.append("file", newFiles);
-    }
-
     setFormData((prevData) => ({
       ...prevData,
       projectImgs: newFiles,
     }));
   };
+
+  const handleCategoryChange = (projectCategories: string[]) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      projectCategories,
+    }));
+  };
+  const handleTeamChange = (
+    isTeamProject: boolean,
+    teamProjectMembers: string[]
+  ) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      isTeamProject,
+      teamProjectMembers,
+    }));
+  };
+
   const handleSubmit = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
+    const imageData = new FormData();
+    const {
+      title,
+      description,
+      githubLink,
+      isTeamProject,
+      ownerId,
+      projectCategories,
+      teamProjectMembers,
+      projectImgs,
+    } = formData;
     console.log(formData);
+    if (projectImgs) {
+      projectImgs.forEach((projectImg) => {
+        imageData.append("file", projectImg);
+      });
+    }
+    // axios.post("...", {
+    //   headers: {
+    //     "Content-Type": "multipart/form-data",
+    //     "Access-Control-Allow-Origin": "*",
+    //   },
+    // });
+
+    // axios.post("")
   };
 
   return (
@@ -81,8 +122,17 @@ const Post = () => {
                 }
               />
             </Section>
-            <CategoryInput />
-            <TeamInput />
+            <CategoryInput
+              onChangeCategory={(projectCategories: string[]) =>
+                handleCategoryChange(projectCategories)
+              }
+            />
+            <TeamInput
+              onChagneTeam={(
+                isTeamProject: boolean,
+                teamProjectMembers: string[]
+              ) => handleTeamChange(isTeamProject, teamProjectMembers)}
+            />
             <Section>
               <Label>GITHUB</Label>
               <SectionRow>
@@ -104,10 +154,7 @@ const Post = () => {
   );
 };
 
-const PostContainer = styled.div`
-  display: flex;
-  justify-content: center;
-`;
+const PostContainer = styled(Container)``;
 const PostForm = styled.form`
   margin: 7.2rem 0;
 `;

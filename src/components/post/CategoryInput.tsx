@@ -1,11 +1,14 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Section, SectionCol } from "../SectionDirection";
 import InputWithEnter from "./InputWithEnter";
 import { Label } from "../CommonTag";
 import StyledList from "./StyledList";
 import styled from "styled-components";
 
-const CategoryInput = () => {
+interface Prop {
+  onChangeCategory: (categories: string[]) => void;
+}
+const CategoryInput = ({ onChangeCategory }: Prop) => {
   const categoryRef = useRef<HTMLInputElement>(null);
   const [categories, setCategories] = useState<string[]>([]);
 
@@ -16,6 +19,10 @@ const CategoryInput = () => {
   function handleRemoveCategory(category: string) {
     setCategories(categories.filter((c) => c !== category));
   }
+
+  useEffect(() => {
+    onChangeCategory(categories);
+  }, [categories]);
 
   return (
     <Section>
