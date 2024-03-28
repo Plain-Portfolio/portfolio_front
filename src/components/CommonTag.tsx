@@ -24,6 +24,7 @@ const Button = styled.input`
   border-radius: 1.5rem;
   font-weight: 900;
 `;
+
 const Label = styled.label`
   font-size: 1.8rem;
   font-weight: 900;
@@ -31,4 +32,9 @@ const Label = styled.label`
   flex-shrink: 0;
 `;
 
-export { Input, Button, Label };
+const Container = styled.div`
+  display: flex;
+  justify-content: center;
+`;
+
+export { Input, Button, Label, Container };

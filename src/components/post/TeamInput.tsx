@@ -1,11 +1,15 @@
 import styled from "styled-components";
 import { Label } from "../CommonTag";
 import { Section, SectionCol, SectionRow } from "../SectionDirection";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import InputWithEnter from "./InputWithEnter";
 import StyledList from "./StyledList";
 
-const TeamInput = () => {
+interface Prop {
+  onChagneTeam: (isTeamProject: boolean, teamProjectMembers: string[]) => void;
+}
+
+const TeamInput = ({ onChagneTeam }: Prop) => {
   const memberRef = useRef<HTMLInputElement>(null);
   const [teamProj, setTeamProj] = useState<boolean>(true);
   const [members, setMembers] = useState<string[]>([]);
@@ -13,6 +17,7 @@ const TeamInput = () => {
   function handleSelect(e: React.MouseEvent<HTMLInputElement>) {
     const value = (e.target as HTMLInputElement).value;
     setTeamProj(value === "true");
+    value === "true" && setMembers([]);
   }
   const handleAddMember = (value: string) => {
     setMembers([...members, value]);
@@ -20,6 +25,11 @@ const TeamInput = () => {
   function handleRemoveMember(member: string) {
     setMembers(members.filter((c) => c !== member));
   }
+
+  useEffect(() => {
+    onChagneTeam(teamProj, members);
+  }, [teamProj, members]);
+
   return (
     <>
       <Section>
