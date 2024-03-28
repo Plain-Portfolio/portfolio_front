@@ -1,7 +1,7 @@
 import { Route, Routes } from "react-router-dom";
 import Join from "./pages/Join/Join";
 import Login from "./pages/Login";
-import Home from "./pages/Home";
+import Home from "./pages/Home/Home";
 import { BrowserRouter } from "react-router-dom";
 import { ThemeProvider } from "styled-components";
 import theme from "./styles/theme";
@@ -24,7 +24,7 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/join" element={<Join />} />
             <Route path="/login" element={<Login />} />
-            <Route path="/post" element={<Post />} />
+            {/* <Route path="/post" element={<Post />} /> */}
           </Routes>
         </BrowserRouter>
       </QueryClientProvider>

@@ -20,8 +20,10 @@ const JoinInputSection = ({
   errorMsg,
   isError,
 }: Props) => {
+  // console.log(isError);
   return (
-    <div>
+    <JoinInputWrapper>
+      <Subtitle>{type}</Subtitle>
       <JoinInput
         onChange={onChange}
         placeholder={placeholder}
@@ -29,22 +31,35 @@ const JoinInputSection = ({
         type={textType}
         data-type={type}
       />
+
       <ErrorMsg>{isError && errorMsg}</ErrorMsg>
-    </div>
+    </JoinInputWrapper>
   );
 };
 export default JoinInputSection;
-const JoinInput = styled.input`
-  width: 428px;
-  height: 48px;
-  border-radius: 25px;
-  padding-left: 15px;
+const JoinInputWrapper = styled.div`
+  width: 100%;
   box-sizing: border-box;
-  margin-bottom: 5px;
+`;
+const Subtitle = styled.div`
+  font-size: 1.5rem;
+  font-weight: 800;
+  padding-left: 1rem;
+  padding-bottom: 0.4rem;
+`;
+const JoinInput = styled.input`
+  display: flex;
+  width: 100%;
+  height: 4.8rem;
+  border-radius: 2.5rem;
+  padding-left: 1.5rem;
+  box-sizing: border-box;
+  margin-bottom: 0.5rem;
+  border: 0.1rem solid #d3d3d3;
 `;
 const ErrorMsg = styled.div`
-  font-size: 13px;
+  font-size: 1.3rem;
   color: red;
-  padding-left: 15px;
-  height: 10px;
+  padding-left: 1.5rem;
+  height: 1rem;
 `;
