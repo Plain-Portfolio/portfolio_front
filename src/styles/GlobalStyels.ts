@@ -18,12 +18,15 @@ const GlobalStyles = createGlobalStyle`
         font-size: 10px;
         vertical-align: baseline;
     }
+    #root{
+        height: 100%;
+    }
     html {
         height: 100vh;
         font-size: 62.5%;
     }
     body{
-        widht:100%;
+        width:100%;
         height:100%;
         line-height: 1;
         font-family: 'Noto Sans KR', sans-serif;

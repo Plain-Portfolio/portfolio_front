@@ -6,7 +6,7 @@ interface ToastProps {
 }
 
 const toastOptions: ToastOptions = {
-  position: "top-right", // 알람 위치 지정
+  position: "bottom-center", // 알람 위치 지정
   autoClose: 2000, // 자동 off 시간
   hideProgressBar: false, // 진행시간바 숨김
   closeOnClick: true, // 클릭으로 알람 닫기
