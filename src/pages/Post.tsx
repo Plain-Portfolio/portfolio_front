@@ -1,49 +1,31 @@
-import styled from "styled-components";
+import { useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Section, SectionRow } from "../components/SectionDirection";
 import { Container, Input, Label } from "../components/CommonTag";
+import Header from "../components/Header/Header";
 import ImageFiles from "../components/post/ImageFiles";
 import CategoryInput from "../components/post/CategoryInput";
 import TeamInput from "../components/post/TeamInput";
-import { PostFormData } from "../interfaces/IPostFormData";
-import { useState } from "react";
+import { Icategory, Imember, PostFormData } from "../interfaces/IPostFormData";
+import styled from "styled-components";
+import { getToken } from "../utils/token";
 import axios from "axios";
 
 const Post = () => {
+  const navigate = useNavigate();
+  const titleRef = useRef<HTMLInputElement>(null);
+  const descriptionRef = useRef<HTMLTextAreaElement>(null);
+  const githubLinkRef = useRef<HTMLInputElement>(null);
   const [formData, setFormData] = useState<PostFormData>({
     title: "",
     description: "",
     githubLink: "",
     isTeamProject: true,
-    ownerId: 0,
+    ownerId: 16,
     projectCategories: [],
     teamProjectMembers: [],
     projectImgs: [],
   });
-
-  const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData((prevData) => ({
-      ...prevData,
-      title: event.target.value,
-    }));
-  };
-
-  const handleDescriptionChange = (
-    event: React.ChangeEvent<HTMLTextAreaElement>
-  ) => {
-    setFormData((prevData) => ({
-      ...prevData,
-      description: event.target.value,
-    }));
-  };
-
-  const handleGithubLinkChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setFormData((prevData) => ({
-      ...prevData,
-      githubLink: event.target.value,
-    }));
-  };
 
   const handleImageChange = (newFiles: File[]) => {
     setFormData((prevData) => ({
@@ -52,111 +34,152 @@ const Post = () => {
     }));
   };
 
-  const handleCategoryChange = (projectCategories: string[]) => {
-    setFormData((prevData) => ({
-      ...prevData,
-      projectCategories,
+  const handleCategoryChange = (projectCategories: Icategory[]) => {
+    const catgoryIds = projectCategories.map((categroy) => ({
+      id: categroy.id,
     }));
-  };
-  const handleTeamChange = (
-    isTeamProject: boolean,
-    teamProjectMembers: string[]
-  ) => {
     setFormData((prevData) => ({
       ...prevData,
-      isTeamProject,
-      teamProjectMembers,
+      projectCategories: catgoryIds,
     }));
   };
 
-  const handleSubmit = (event: React.MouseEvent<HTMLButtonElement>) => {
+  const handleTeamChange = (
+    isTeamProject: boolean,
+    teamProjectMembers: Imember[]
+  ) => {
+    const memberIds = teamProjectMembers.map((member) => ({ id: member.id }));
+    setFormData((prevData) => ({
+      ...prevData,
+      isTeamProject,
+      teamProjectMembers: memberIds,
+    }));
+  };
+
+  const handleSubmit = async (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     const imageData = new FormData();
     const {
-      title,
-      description,
-      githubLink,
       isTeamProject,
       ownerId,
       projectCategories,
-      teamProjectMembers,
       projectImgs,
+      teamProjectMembers,
     } = formData;
-    console.log(formData);
+
     if (projectImgs) {
       projectImgs.forEach((projectImg) => {
         imageData.append("file", projectImg);
       });
     }
-    // axios.post("...", {
-    //   headers: {
-    //     "Content-Type": "multipart/form-data",
-    //     "Access-Control-Allow-Origin": "*",
-    //   },
-    // });
 
-    // axios.post("")
+    const title = titleRef.current?.value;
+    const description = descriptionRef.current?.value;
+    const githubLink = githubLinkRef.current?.value;
+    // console.log(
+    //   title,
+    //   description,
+    //   githubLink,
+    //   isTeamProject,
+    //   ownerId,
+    //   projectCategories,
+    //   teamProjectMembers
+    // );
+    const res = await axios.post(
+      `${process.env.REACT_APP_API_URL}/project/create`,
+      {
+        title,
+        description,
+        githubLink,
+        isTeamProject,
+        ownerId,
+        projectCategories,
+        teamProjectMembers,
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `${getToken()}`,
+        },
+      }
+    );
+    const createdId = res.data.id;
+
+    await axios.post(
+      `${process.env.REACT_APP_API_URL}/project/create`,
+      imageData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          "Access-Control-Allow-Origin": "*",
+        },
+      }
+    );
+    navigate(`/read/${createdId}`);
   };
 
   return (
-    <PostContainer>
-      <PostForm>
-        <PostContent>
-          <PostTitle
-            id="title"
-            type="text"
-            onChange={handleTitleChange}
-            placeholder="프로젝트 제목을 입력하세요."
-          />
-          <PostDescription
-            id="description"
-            onChange={handleDescriptionChange}
-            placeholder="프로젝트에 대한 설명을 입력하세요."
-          />
-          <div>
-            <Section>
-              <Label>이미지</Label>
-              <ImageFiles
-                onFilesChange={(newFiles: File[]) =>
-                  handleImageChange(newFiles)
+    <>
+      <Header />
+      <PostContainer>
+        <PostForm>
+          <PostContent>
+            <PostTitle
+              id="title"
+              type="text"
+              ref={titleRef}
+              placeholder="프로젝트 제목을 입력하세요."
+            />
+            <PostDescription
+              id="description"
+              ref={descriptionRef}
+              placeholder="프로젝트에 대한 설명을 입력하세요."
+            />
+            <div>
+              <Section>
+                <Label>이미지</Label>
+                <ImageFiles
+                  onFilesChange={(newFiles: File[]) =>
+                    handleImageChange(newFiles)
+                  }
+                />
+              </Section>
+              <CategoryInput
+                onChangeCategory={(projectCategories: Icategory[]) =>
+                  handleCategoryChange(projectCategories)
                 }
               />
-            </Section>
-            <CategoryInput
-              onChangeCategory={(projectCategories: string[]) =>
-                handleCategoryChange(projectCategories)
-              }
-            />
-            <TeamInput
-              onChagneTeam={(
-                isTeamProject: boolean,
-                teamProjectMembers: string[]
-              ) => handleTeamChange(isTeamProject, teamProjectMembers)}
-            />
-            <Section>
-              <Label>GITHUB</Label>
-              <SectionRow>
-                <Input
-                  id="githubLink"
-                  type="text"
-                  onChange={handleGithubLinkChange}
-                  placeholder="https://github.com/..."
-                />
-              </SectionRow>
-            </Section>
-          </div>
-        </PostContent>
-        <PostButton type="submit" onClick={handleSubmit}>
-          게시하기
-        </PostButton>
-      </PostForm>
-    </PostContainer>
+              <TeamInput
+                onChagneTeam={(
+                  isTeamProject: boolean,
+                  teamProjectMembers: Imember[]
+                ) => handleTeamChange(isTeamProject, teamProjectMembers)}
+              />
+              <Section>
+                <Label>GITHUB</Label>
+                <SectionRow>
+                  <Input
+                    id="githubLink"
+                    type="text"
+                    ref={githubLinkRef}
+                    placeholder="https://github.com/..."
+                  />
+                </SectionRow>
+              </Section>
+            </div>
+          </PostContent>
+          <PostButton type="submit" onClick={handleSubmit}>
+            게시하기
+          </PostButton>
+        </PostForm>
+      </PostContainer>
+    </>
   );
 };
 
 const PostContainer = styled(Container)``;
 const PostForm = styled.form`
-  margin: 7.2rem 0;
+  margin: 14rem 0;
 `;
 const PostContent = styled.div`
   width: 119.6rem;
