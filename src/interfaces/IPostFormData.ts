@@ -4,9 +4,19 @@ interface PostFormData {
   githubLink: string;
   isTeamProject: boolean;
   ownerId: number;
-  projectCategories: string[];
+  projectCategories: { id: number }[];
   projectImgs: File[];
-  teamProjectMembers: string[];
+  teamProjectMembers: { id: number }[];
 }
 
-export type { PostFormData };
+interface Icategory {
+  id: number;
+  name: string;
+}
+
+interface Imember {
+  id: number;
+  nickname: string;
+}
+
+export type { PostFormData, Icategory, Imember };
