@@ -4,7 +4,7 @@ import { Label } from "../CommonTag";
 import StyledList from "./SelectedStyledList";
 import TagStyledList from "./TagStyledList";
 import InputWithEnter from "./InputWithEnter";
-import { Icategory } from "../../interfaces/IPostFormData";
+import { Icategory } from "../../interfaces/IPost";
 import { getToken } from "../../utils/token";
 import styled from "styled-components";
 import axios from "axios";

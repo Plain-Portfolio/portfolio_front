@@ -6,7 +6,7 @@ import Header from "../components/Header/Header";
 import ImageFiles from "../components/post/ImageFiles";
 import CategoryInput from "../components/post/CategoryInput";
 import TeamInput from "../components/post/TeamInput";
-import { Icategory, Imember, PostFormData } from "../interfaces/IPostFormData";
+import { Icategory, Imember, PostFormData } from "../interfaces/IPost";
 import styled from "styled-components";
 import { getToken } from "../utils/token";
 import axios from "axios";
@@ -188,10 +188,10 @@ const Post = () => {
   );
 };
 
-const PostContainer = styled(Container)``;
-const PostForm = styled.form`
+const PostContainer = styled(Container)`
   margin: 14rem 0;
 `;
+const PostForm = styled.form``;
 const PostContent = styled.div`
   width: 119.6rem;
   border: 1px solid ${({ theme }) => theme.darkgray};

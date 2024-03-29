@@ -3,7 +3,7 @@ import styled from "styled-components";
 import StyledList from "./SelectedStyledList";
 import { Section, SectionCol, SectionRow } from "../SectionDirection";
 import { Input, Label } from "../CommonTag";
-import { Imember } from "../../interfaces/IPostFormData";
+import { Imember } from "../../interfaces/IPost";
 import { LoginUser } from "../../interfaces/IUser";
 import { getToken } from "../../utils/token";
 import axios from "axios";

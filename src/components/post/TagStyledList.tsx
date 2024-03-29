@@ -1,4 +1,4 @@
-import { Icategory, Imember } from "../../interfaces/IPostFormData";
+import { Icategory, Imember } from "../../interfaces/IPost";
 import { Item, List } from "../CommonTag";
 
 // memo지혜: 조회해 온 맴버 또는 카테고리를 나열하는 컴포넌트
