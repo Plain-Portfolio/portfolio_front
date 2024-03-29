@@ -37,4 +37,28 @@ const Container = styled.div`
   justify-content: center;
 `;
 
-export { Input, Button, Label, Container };
+const List = styled.ul`
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  margin: 0.5rem 0;
+  min-height: 3rem;
+`;
+const Item = styled.li<{ color?: string }>`
+  height: 2.8rem;
+  border-radius: 2rem;
+  margin-right: 0.8rem;
+  padding: 0.5rem 1.5rem;
+  border: 1px solid ${({ theme }) => theme.darkgry};
+  line-height: 1.5rem;
+  cursor: pointer;
+
+  ${({ theme, color }) =>
+    color &&
+    `
+    background-color: ${theme[color]}; 
+    color: white;
+  `}
+`;
+
+export { Input, Button, Label, Container, List, Item };
