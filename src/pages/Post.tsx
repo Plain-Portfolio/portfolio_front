@@ -76,6 +76,17 @@ const Post = () => {
     const title = titleRef.current?.value;
     const description = descriptionRef.current?.value;
     const githubLink = githubLinkRef.current?.value;
+    if (
+      !title ||
+      !description ||
+      !githubLink ||
+      projectCategories.length < 1 ||
+      projectImgs.length < 1 ||
+      teamProjectMembers.length < 1
+    ) {
+      alert("모두 입력해주세요.");
+      return;
+    }
     // console.log(
     //   title,
     //   description,
@@ -105,16 +116,16 @@ const Post = () => {
     );
     const createdId = res.data.id;
 
-    await axios.post(
-      `${process.env.REACT_APP_API_URL}/project/create`,
-      imageData,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          "Access-Control-Allow-Origin": "*",
-        },
-      }
-    );
+    // await axios.post(
+    //   `${process.env.REACT_APP_API_URL}/project/create`,
+    //   imageData,
+    //   {
+    //     headers: {
+    //       "Content-Type": "multipart/form-data",
+    //       "Access-Control-Allow-Origin": "*",
+    //     },
+    //   }
+    // );
     navigate(`/read/${createdId}`);
   };
 
