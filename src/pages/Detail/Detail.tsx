@@ -12,6 +12,7 @@ import { useProjectData } from "../../hooks/projecthooks";
 import { useMutation } from "@tanstack/react-query";
 import styled from "styled-components";
 import axios from "axios";
+import Layout from "../../components/Layout/Layout";
 
 const likeProject = async ({
   projectId,
@@ -73,72 +74,69 @@ const Detail = () => {
   };
 
   return (
-    <>
-      <Header />
-      <div className="main">
-        <ReadContainer>
-          <ReadBorder>
-            <ReadTitle>프로젝트제목</ReadTitle>
-            {project?.owner.id === Number(userId) && (
-              <ButtonGruop>
-                <UpdButton
-                  type="button"
-                  onClick={() => navigate(`/edit/${projectId}`)}
-                  value="수정하기"
-                />
-                <DelButton
-                  type="button"
-                  onClick={handleRemoveProject}
-                  value="삭제하기"
-                />
-              </ButtonGruop>
-            )}
-            <ReadContent>
-              <SectionLeft>
-                <Carousel />
-                <LikeInfo>
-                  <Ul>
-                    <Li>
-                      {liked ? (
-                        <HiHeart size="32" color="#f00" onClick={handleLike} />
-                      ) : (
-                        <HiOutlineHeart size="32" onClick={handleLike} />
-                      )}
-                    </Li>
-                    <Li>
-                      <Author>{project?.owner.email}</Author>
-                    </Li>
-                  </Ul>
-                </LikeInfo>
-                <Comment>댓글</Comment>
-              </SectionLeft>
-              <SectionRight>
-                <ul>
+    <Layout>
+      <ReadContainer>
+        <ReadBorder>
+          <ReadTitle>프로젝트제목</ReadTitle>
+          {project?.owner.id === Number(userId) && (
+            <ButtonGruop>
+              <UpdButton
+                type="button"
+                onClick={() => navigate(`/edit/${projectId}`)}
+                value="수정하기"
+              />
+              <DelButton
+                type="button"
+                onClick={handleRemoveProject}
+                value="삭제하기"
+              />
+            </ButtonGruop>
+          )}
+          <ReadContent>
+            <SectionLeft>
+              <Carousel />
+              <LikeInfo>
+                <Ul>
                   <Li>
-                    <Badge>{project?.isTeamProject ? "팀" : "개인"}</Badge>
-                    {/* 맴버 */}
-                    {/* {project?.isTeamProject && members.map((member) => (
+                    {liked ? (
+                      <HiHeart size="32" color="#f00" onClick={handleLike} />
+                    ) : (
+                      <HiOutlineHeart size="32" onClick={handleLike} />
+                    )}
+                  </Li>
+                  <Li>
+                    <Author>{project?.owner.email}</Author>
+                  </Li>
+                </Ul>
+              </LikeInfo>
+              <Comment>댓글</Comment>
+            </SectionLeft>
+            <SectionRight>
+              <ul>
+                <Li>
+                  <Badge>{project?.isTeamProject ? "팀" : "개인"}</Badge>
+                  {/* 맴버 */}
+                  {/* {project?.isTeamProject && members.map((member) => (
                       <Badge>{member.name}</Badge>
                     ))} */}
-                  </Li>
-                  <Li>
-                    <label>카테고리</label>
-                  </Li>
-                  <Li>
-                    <label>깃링크</label>
-                    <span>{project?.githubLink}</span>
-                  </Li>
-                  <Li>
-                    <label>줄글</label>
-                    <div>{project?.description}</div>
-                  </Li>
-                </ul>
-              </SectionRight>
-            </ReadContent>
-          </ReadBorder>
-        </ReadContainer>
-      </div>
-    </>
+                </Li>
+                <Li>
+                  <label>카테고리</label>
+                </Li>
+                <Li>
+                  <label>깃링크</label>
+                  <span>{project?.githubLink}</span>
+                </Li>
+                <Li>
+                  <label>줄글</label>
+                  <div>{project?.description}</div>
+                </Li>
+              </ul>
+            </SectionRight>
+          </ReadContent>
+        </ReadBorder>
+      </ReadContainer>
+    </Layout>
   );
 };
 
