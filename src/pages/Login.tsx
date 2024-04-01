@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import LoginContent from "../components/LoginContent";
+import LoginContent from "../components/Login/LoginContent";
 
 export default function Login() {
   return (

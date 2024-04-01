@@ -10,7 +10,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import CustomToast from "./components/CustomToast";
 import "react-toastify/dist/ReactToastify.min.css";
 import Post from "./pages/Post";
-import Detail from "./pages/Detail";
+import Detail from "./pages/Detail/Detail";
 
 const queryClient = new QueryClient();
 
@@ -27,6 +27,7 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/post" element={<Post />} />
             <Route path="/read/:id" element={<Detail />} />
+            <Route path="/edit/:id" element={<Post />} />
           </Routes>
         </BrowserRouter>
       </QueryClientProvider>
