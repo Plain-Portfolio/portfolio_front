@@ -32,9 +32,7 @@ function App() {
               <Route path="/edit/:id" element={<Post />} />
               <Route path="/post" element={<Post />} />
             </Route>
-            <Route path="*">
-              <NotFound />
-            </Route>
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
       </QueryClientProvider>
