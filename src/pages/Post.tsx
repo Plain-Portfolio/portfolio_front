@@ -1,37 +1,46 @@
-import { useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
+import { useParams } from "react-router-dom";
 import { Section, SectionRow } from "../components/SectionDirection";
 import { Container, Input, Label } from "../components/CommonTag";
 import Header from "../components/Header/Header";
-import ImageFiles from "../components/post/ImageFiles";
-import CategoryInput from "../components/post/CategoryInput";
-import TeamInput from "../components/post/TeamInput";
+import ImageFiles from "../components/Post/ImageFiles";
+import CategoryInput from "../components/Post/CategoryInput";
+import TeamInput from "../components/Post/TeamInput";
 import { Icategory, Imember, PostFormData } from "../interfaces/IPost";
+import { Iproject } from "../interfaces/IDetail";
+import { useProjectData } from "../hooks/projecthooks";
 import styled from "styled-components";
-import { getToken } from "../utils/token";
-import axios from "axios";
 
 const Post = () => {
-  const navigate = useNavigate();
+  const userId = localStorage.getItem("user_id");
+
+  const params = useParams();
+  const projectId = params.id;
+  const edit = !!projectId;
+
   const titleRef = useRef<HTMLInputElement>(null);
   const descriptionRef = useRef<HTMLTextAreaElement>(null);
   const githubLinkRef = useRef<HTMLInputElement>(null);
+  const [project, setProject] = useState<Iproject>();
+  const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [formData, setFormData] = useState<PostFormData>({
-    title: "",
-    description: "",
-    githubLink: "",
     isTeamProject: true,
-    ownerId: 16,
     projectCategories: [],
     teamProjectMembers: [],
     projectImgs: [],
   });
 
+  const { isLoading, data, isError, error, createMutate, updateMutate } =
+    useProjectData(projectId);
+
+  useEffect(() => {
+    if (!isLoading && !isError) {
+      setProject(data);
+    }
+  }, [data]);
+
   const handleImageChange = (newFiles: File[]) => {
-    setFormData((prevData) => ({
-      ...prevData,
-      projectImgs: newFiles,
-    }));
+    setImageFiles(newFiles);
   };
 
   const handleCategoryChange = (projectCategories: Icategory[]) => {
@@ -58,75 +67,58 @@ const Post = () => {
 
   const handleSubmit = async (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
-    const imageData = new FormData();
-    const {
-      isTeamProject,
-      ownerId,
-      projectCategories,
-      projectImgs,
-      teamProjectMembers,
-    } = formData;
-
-    if (projectImgs) {
-      projectImgs.forEach((projectImg) => {
-        imageData.append("file", projectImg);
-      });
-    }
 
     const title = titleRef.current?.value;
     const description = descriptionRef.current?.value;
     const githubLink = githubLinkRef.current?.value;
+
+    const { isTeamProject, projectCategories, teamProjectMembers } = formData;
+
+    const imageData = new FormData();
+    if (imageFiles) {
+      imageFiles.forEach((imageFile) => {
+        imageData.append("file", imageFile);
+      });
+    }
+
     if (
       !title ||
       !description ||
       !githubLink ||
       projectCategories.length < 1 ||
-      projectImgs.length < 1 ||
-      teamProjectMembers.length < 1
+      imageFiles.length < 1 ||
+      (isTeamProject && teamProjectMembers.length < 1)
     ) {
       alert("모두 입력해주세요.");
       return;
     }
-    // console.log(
-    //   title,
-    //   description,
-    //   githubLink,
-    //   isTeamProject,
-    //   ownerId,
-    //   projectCategories,
-    //   teamProjectMembers
-    // );
-    const res = await axios.post(
-      `${process.env.REACT_APP_API_URL}/project/create`,
-      {
-        title,
-        description,
-        githubLink,
-        isTeamProject,
-        ownerId,
-        projectCategories,
-        teamProjectMembers,
-      },
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `${getToken()}`,
-        },
-      }
-    );
-    const createdId = res.data.id;
 
-    // await axios.post(
-    //   `${process.env.REACT_APP_API_URL}/project/create`,
-    //   imageData,
-    //   {
-    //     headers: {
-    //       "Content-Type": "multipart/form-data",
-    //       "Access-Control-Allow-Origin": "*",
-    //     },
-    //   }
-    // );
-    navigate(`/read/${createdId}`);
+    const postData = {
+      title,
+      description,
+      githubLink,
+      isTeamProject,
+      ownerId: Number(userId),
+      projectCategories,
+      teamProjectMembers,
+    };
+
+    if (!edit) {
+      createMutate(postData);
+      // 이미지 업로드
+      // await axios.post(
+      //   `${process.env.REACT_APP_API_URL}/project/create`,
+      //   imageData,
+      //   {
+      //     headers: {
+      //       "Content-Type": "multipart/form-data",
+      //       "Access-Control-Allow-Origin": "*",
+      //     },
+      //   }
+      // );
+    } else {
+      updateMutate(postData);
+    }
   };
 
   return (
@@ -140,11 +132,13 @@ const Post = () => {
               type="text"
               ref={titleRef}
               placeholder="프로젝트 제목을 입력하세요."
+              defaultValue={edit && project ? project.title : ""}
             />
             <PostDescription
               id="description"
               ref={descriptionRef}
               placeholder="프로젝트에 대한 설명을 입력하세요."
+              defaultValue={edit && project ? project.description : ""}
             />
             <div>
               <Section>
@@ -153,18 +147,22 @@ const Post = () => {
                   onFilesChange={(newFiles: File[]) =>
                     handleImageChange(newFiles)
                   }
+                  // defaultimages = {edit && project ? project.member : ""}
                 />
               </Section>
               <CategoryInput
                 onChangeCategory={(projectCategories: Icategory[]) =>
                   handleCategoryChange(projectCategories)
                 }
+                // defaultCategories={edit && project ? project.category : ""}
               />
               <TeamInput
                 onChagneTeam={(
                   isTeamProject: boolean,
                   teamProjectMembers: Imember[]
                 ) => handleTeamChange(isTeamProject, teamProjectMembers)}
+                defaultIsTeam={edit && project && project.isTeamProject}
+                // defaultIsTeam={edit && project ? project.member : ""}
               />
               <Section>
                 <Label>GITHUB</Label>
@@ -174,13 +172,14 @@ const Post = () => {
                     type="text"
                     ref={githubLinkRef}
                     placeholder="https://github.com/..."
+                    defaultValue={edit && project ? project.githubLink : ""}
                   />
                 </SectionRow>
               </Section>
             </div>
           </PostContent>
           <PostButton type="submit" onClick={handleSubmit}>
-            게시하기
+            {edit ? "수정하기" : "게시하기"}
           </PostButton>
         </PostForm>
       </PostContainer>

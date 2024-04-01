@@ -1,11 +1,11 @@
 interface PostFormData {
-  title: string;
-  description: string;
-  githubLink: string;
+  title?: string;
+  description?: string;
+  githubLink?: string;
   isTeamProject: boolean;
-  ownerId: number;
+  ownerId?: number;
   projectCategories: { id: number }[];
-  projectImgs: File[];
+  projectImgs?: File[];
   teamProjectMembers: { id: number }[];
 }
 

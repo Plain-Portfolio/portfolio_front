@@ -11,9 +11,10 @@ import TagStyledList from "./TagStyledList";
 
 interface Prop {
   onChagneTeam: (isTeamProject: boolean, teamProjectMembers: Imember[]) => void;
+  defaultIsTeam: boolean | undefined;
 }
 
-const TeamInput = ({ onChagneTeam }: Prop) => {
+const TeamInput = ({ onChagneTeam, defaultIsTeam }: Prop) => {
   const [teamProj, setTeamProj] = useState<boolean>(true);
   //memo지혜: 선택한 맴버배열 상태
   const [selectedMembers, setSelectedMembers] = useState<Imember[]>([]);
@@ -54,8 +55,9 @@ const TeamInput = ({ onChagneTeam }: Prop) => {
         { headers: { Authorization: `${getToken()}` } }
       );
       const result = res.data;
-      console.log(result);
+
       if (result) {
+        // console.log(result);
         setMembers([...result.users]);
       }
     }
@@ -74,7 +76,7 @@ const TeamInput = ({ onChagneTeam }: Prop) => {
               type="radio"
               value="true"
               onClick={handleSelect}
-              defaultChecked={teamProj}
+              defaultChecked={defaultIsTeam ? defaultIsTeam : teamProj}
             />
             <label htmlFor="select1">팀</label>
             <TeamButton
@@ -83,6 +85,7 @@ const TeamInput = ({ onChagneTeam }: Prop) => {
               type="radio"
               value="false"
               onClick={handleSelect}
+              defaultChecked={defaultIsTeam ? !defaultIsTeam : !teamProj}
             />
             <label htmlFor="select2">개인</label>
           </ButtonGroup>
