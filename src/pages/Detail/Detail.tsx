@@ -2,18 +2,19 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Button, Container } from "../../components/CommonTag";
 import { SectionCol, SectionRow } from "../../components/SectionDirection";
-import Header from "../../components/Header/Header";
 import Carousel from "../../components/Detail/Carousel";
-import { Icomment, Iproject } from "../../interfaces/IDetail";
+import { Icomment, Ilike, Iproject } from "../../interfaces/IDetail";
 import { HiHeart } from "react-icons/hi";
 import { HiOutlineHeart } from "react-icons/hi";
 import { getToken } from "../../utils/token";
 import { useProjectData } from "../../hooks/projecthooks";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import styled from "styled-components";
 import axios from "axios";
 import Layout from "../../components/Layout/Layout";
+import DetailSkeleton from "../../components/Skeleton/DetailSkeleton";
 
+// memo지혜 : 좋아요, 좋아요 취소 API
 const likeProject = async ({
   projectId,
   liked,
@@ -44,20 +45,45 @@ const Detail = () => {
   const projectId = params.id;
   const userId = localStorage.getItem("user_id");
 
+  // memo지혜 : 프로젝트 상태관리
   const [project, setProject] = useState<Iproject>();
+  // memo지혜 : 댓글 상태관리
   const [comment, setComment] = useState<Icomment[]>([]);
+  // memo지혜 : 좋아요 상태관리
   const [liked, setLiked] = useState<boolean>(false);
 
+  const queryClient = useQueryClient();
+
+  // memo지혜 : 프로젝트 get, delete custom hooks
   const { isLoading, data, isError, error, deleteMutate } =
     useProjectData(projectId);
 
   useEffect(() => {
-    setProject(data);
+    if (data) {
+      const { comments, likes, ...projectInfo } = data;
+
+      //memo지혜: 게시물에 사용자가 좋아요를 했는지 확인하는 함수
+      const isLiked = likes.some(
+        (like: Ilike) => like.userId === Number(userId)
+      );
+
+      if (isLiked) {
+        setLiked(isLiked);
+      }
+
+      setComment(comments);
+      setProject({ ...projectInfo, likes });
+    }
   }, [data]);
 
   const { mutate: likeMutate } = useMutation({
     mutationFn: likeProject,
     onSuccess: (data) => {
+      // memo지혜: like api 호출후 fetchdata키를 가진 캐시 무효화
+      //           그 결과 refetch
+      queryClient.invalidateQueries({
+        queryKey: ["fetchdata", projectId as string],
+      });
       setLiked(!liked);
     },
     onError: (error) => {
@@ -73,11 +99,19 @@ const Detail = () => {
     projectId && likeMutate({ projectId, liked });
   };
 
+  if (isLoading) {
+    return (
+      <Layout>
+        <DetailSkeleton />
+      </Layout>
+    );
+  }
+
   return (
     <Layout>
       <ReadContainer>
         <ReadBorder>
-          <ReadTitle>프로젝트제목</ReadTitle>
+          <ReadTitle>{project?.title}</ReadTitle>
           {project?.owner.id === Number(userId) && (
             <ButtonGruop>
               <UpdButton
@@ -94,7 +128,7 @@ const Detail = () => {
           )}
           <ReadContent>
             <SectionLeft>
-              <Carousel />
+              <Carousel images={project ? project.projectImgs : []} />
               <LikeInfo>
                 <Ul>
                   <Li>
@@ -103,6 +137,7 @@ const Detail = () => {
                     ) : (
                       <HiOutlineHeart size="32" onClick={handleLike} />
                     )}
+                    <span>{project?.likes.length}</span>
                   </Li>
                   <Li>
                     <Author>{project?.owner.email}</Author>
@@ -115,13 +150,16 @@ const Detail = () => {
               <ul>
                 <Li>
                   <Badge>{project?.isTeamProject ? "팀" : "개인"}</Badge>
-                  {/* 맴버 */}
-                  {/* {project?.isTeamProject && members.map((member) => (
-                      <Badge>{member.name}</Badge>
-                    ))} */}
+                  {project?.isTeamProject &&
+                    project.teamProjectMembers.map((member) => (
+                      <Badge>{member.userId}</Badge>
+                    ))}
                 </Li>
                 <Li>
                   <label>카테고리</label>
+                  {project?.projectCategories.map((category) => (
+                    <Badge>{category.name}</Badge>
+                  ))}
                 </Li>
                 <Li>
                   <label>깃링크</label>
@@ -237,6 +275,6 @@ const Li = styled.li`
 
 const Comment = styled.div`
   flex-grow: 6;
-  flex-shrink: 0;
+  min-height: 20rem;
   background-color: white;
 `;
