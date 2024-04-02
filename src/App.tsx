@@ -10,7 +10,9 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import CustomToast from "./components/CustomToast";
 import "react-toastify/dist/ReactToastify.min.css";
 import Post from "./pages/Post";
-// import MyProject from "./pages/MyProjectList";
+import Detail from "./pages/Detail/Detail";
+import NotFound from "./components/Route/NotFound";
+import PrivateRoute from "./components/Route/PrivateRoute";
 
 const queryClient = new QueryClient();
 
@@ -25,8 +27,12 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/join" element={<Join />} />
             <Route path="/login" element={<Login />} />
-            <Route path="/post" element={<Post />} />
-            {/* <Route path="/myproject" element={<MyProject />} /> */}
+            <Route path="/read/:id" element={<Detail />} />
+            <Route element={<PrivateRoute />}>
+              <Route path="/edit/:id" element={<Post />} />
+              <Route path="/post" element={<Post />} />
+            </Route>
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
       </QueryClientProvider>
