@@ -40,13 +40,6 @@ const CategoryInput = ({ onChangeCategory, defaultCategories }: Props) => {
       selectedCategories.filter((c) => c.id !== categoryId)
     );
   }
-  // memo지혜: 카테고리 선택
-  function selectCategory(categoryId: number, categoryName: string) {
-    setSelectedCategories((prev) => [
-      ...prev,
-      { id: categoryId, name: categoryName },
-    ]);
-  }
 
   //memo지혜: lifting state up
   useEffect(() => {
@@ -67,6 +60,7 @@ const CategoryInput = ({ onChangeCategory, defaultCategories }: Props) => {
     featchData();
   }, []);
 
+  // memo지혜: 카테고리 선택
   function selectCategory(categoryId: number, categoryName: string) {
     setSelectedCategories((prev) => [
       ...prev,

@@ -113,7 +113,6 @@ const Post = () => {
       isTeamProject,
       ownerId: Number(userId),
       projectCategories,
-      projectImgs,
       teamProjectMembers,
     } as PostFormData;
 
