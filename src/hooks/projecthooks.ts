@@ -8,7 +8,7 @@ const fetchProject = async (projectId: string) => {
   const res = await axios.get(
     `${process.env.REACT_APP_API_URL}/project/${projectId}`
   );
-  return res.data.project;
+  return res.data;
 };
 
 const deleteProject = async (projectId: string) => {
