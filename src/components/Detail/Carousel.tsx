@@ -2,15 +2,18 @@ import { useRef, useState } from "react";
 import styled from "styled-components";
 import { IoIosArrowForward } from "react-icons/io";
 import { IoIosArrowBack } from "react-icons/io";
+import { IprojectImgs } from "../../interfaces/IPost";
 
-const Carousel = () => {
+type Props = { images: IprojectImgs[] };
+
+const Carousel = ({ images }: Props) => {
   const slideRef = useRef<HTMLDivElement>(null);
   const [currentSlide, setCurrentSlide] = useState<number>(0);
 
-  const images = [
-    { url: "/logo192.png", alt: "Image 1" },
-    { url: "/favicon.png", alt: "Image 2" },
-  ];
+  // const images = [
+  //   { url: "/logo192.png", alt: "Image 1" },
+  //   { url: "/favicon.png", alt: "Image 2" },
+  // ];
   const sliding = (newSlideIndex: number) => {
     if (slideRef?.current) {
       slideRef.current.style.transition = "all 0.5s ease-in-out";
@@ -34,8 +37,8 @@ const Carousel = () => {
   return (
     <CarouselContainer>
       <CarouselTrack ref={slideRef}>
-        {images.map((image, index) => (
-          <img key={index} src={image.url} alt={image.alt} />
+        {images.map((image: IprojectImgs, index) => (
+          <img key={index} src={image.src} alt={image.alt} />
         ))}
       </CarouselTrack>
       <CarouselPrev onClick={handlePrevClick}>
@@ -50,6 +53,7 @@ const Carousel = () => {
 export default Carousel;
 
 const CarouselContainer = styled.div`
+  min-height: 20rem;
   flex-grow: 3;
   width: 100%;
   background-color: white;
@@ -71,7 +75,6 @@ const CarouselButton = styled.button`
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  z-index: 10;
   font-size: 24px;
   cursor: pointer;
 `;
