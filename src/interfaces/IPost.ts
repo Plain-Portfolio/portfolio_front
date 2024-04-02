@@ -1,22 +1,42 @@
+// memo지혜: 생성모드 시, 제출할 폼 인터페이스
 interface PostFormData {
   title?: string;
   description?: string;
   githubLink?: string;
   isTeamProject: boolean;
   ownerId?: number;
-  projectCategories: { id: number }[];
-  projectImgs?: File[];
-  teamProjectMembers: { id: number }[];
+  projectCategories: IdNumberArr;
+  projectImgs?: IdNumberArr;
+  teamProjectMembers: IdNumberArr;
+}
+interface idNumber {
+  id: number;
 }
 
-interface Icategory {
-  id: number;
+interface IdNumberArr extends Array<idNumber> {}
+
+// memo지혜: 수정모드 시, 필요한 Icategory 인터페이스 (생성할 때 선택한 카테고리를 보여주기 위해)
+interface Icategory extends idNumber {
   name: string;
 }
 
-interface Imember {
-  id: number;
+// memo지혜: 수정모드 시, 필요한 Imember 인터페이스 (생성할 때 선택한 맴버를 보여주기 위해)
+interface Imember extends idNumber {
   nickname: string;
 }
 
-export type { PostFormData, Icategory, Imember };
+// memo지혜: 수정모드 시, 필요한 projectimages 인터페이스
+interface IprojectImgs {
+  id: number;
+  src: string;
+  alt: string;
+}
+
+export type {
+  PostFormData,
+  Icategory,
+  Imember,
+  idNumber,
+  IdNumberArr,
+  IprojectImgs,
+};
