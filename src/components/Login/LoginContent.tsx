@@ -3,9 +3,9 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useMutation } from "@tanstack/react-query";
-import { Input } from "./CommonTag";
-import { SectionCol } from "./SectionDirection";
-import { LoginResponse, User } from "../interfaces/IUser";
+import { Input } from "../CommonTag";
+import { SectionCol } from "../SectionDirection";
+import { LoginResponse, User } from "../../interfaces/IUser";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 

@@ -1,137 +1,132 @@
-import { useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
+import { useParams } from "react-router-dom";
 import { Section, SectionRow } from "../components/SectionDirection";
-import { Container, Input, Label } from "../components/CommonTag";
-import Header from "../components/Header/Header";
-import ImageFiles from "../components/post/ImageFiles";
-import CategoryInput from "../components/post/CategoryInput";
-import TeamInput from "../components/post/TeamInput";
-import { Icategory, Imember, PostFormData } from "../interfaces/IPostFormData";
+import { Container, FillButton, Input, Label } from "../components/CommonTag";
+import ImageFiles from "../components/Post/ImageFiles";
+import CategoryInput from "../components/Post/CategoryInput";
+import TeamInput from "../components/Post/TeamInput";
+import Layout from "../components/Layout/Layout";
+import {
+  Icategory,
+  IdNumberArr,
+  Imember,
+  PostFormData,
+} from "../interfaces/IPost";
+import { Iproject } from "../interfaces/IDetail";
+import { useProjectData } from "../hooks/projecthooks";
 import styled from "styled-components";
-import { getToken } from "../utils/token";
-import axios from "axios";
 
 const Post = () => {
-  const navigate = useNavigate();
+  const userId = localStorage.getItem("user_id");
+
+  const params = useParams();
+  const projectId = params.id;
+  //memo지혜: 수정모드일 경우 url이 /edit/:number 이므로 parasm.id로 판단
+  const edit = !!projectId;
+
   const titleRef = useRef<HTMLInputElement>(null);
   const descriptionRef = useRef<HTMLTextAreaElement>(null);
   const githubLinkRef = useRef<HTMLInputElement>(null);
+
+  // memo지혜: 수정모드시, project 정보를 상태관리
+  const [project, setProject] = useState<Iproject>();
+  // memo지혜: 이미지 id에 대한 상태관리
+  const [imageFiles, setImageFiles] = useState<IdNumberArr>([]);
+  // memo지혜: 생성모드시, post 정보를 상태관리
   const [formData, setFormData] = useState<PostFormData>({
-    title: "",
-    description: "",
-    githubLink: "",
     isTeamProject: true,
-    ownerId: 16,
     projectCategories: [],
     teamProjectMembers: [],
     projectImgs: [],
   });
 
-  const handleImageChange = (newFiles: File[]) => {
-    setFormData((prevData) => ({
-      ...prevData,
-      projectImgs: newFiles,
-    }));
+  // memo지혜: 생성, 수정 mutation custom hook
+  const { isLoading, data, isError, error, createMutate, updateMutate } =
+    useProjectData(projectId);
+
+  // memo지혜: 수정모드에서 get요청이 성공하면 project에 상태을 할당
+  //          data는 기본 undefined로 data를 받아온 경우에서 setting됨
+  useEffect(() => {
+    data && setProject(data);
+  }, [data]);
+
+  // memo지혜: 이미지 변경에 따른 상태관리
+  const handleImageChange = (newFiles: IdNumberArr) => {
+    setImageFiles(newFiles);
   };
 
+  // memo지혜: 카테고리 변경에 따른 상태관리
   const handleCategoryChange = (projectCategories: Icategory[]) => {
-    const catgoryIds = projectCategories.map((categroy) => ({
-      id: categroy.id,
+    // memo지혜: 카테고리 {id: number} 의 배열형태로 배열생성
+    const catgoryIds = projectCategories.map(({ id }) => ({
+      id,
     }));
+
     setFormData((prevData) => ({
       ...prevData,
-      projectCategories: catgoryIds,
+      projectCategories: catgoryIds as IdNumberArr,
     }));
   };
 
+  // memo지혜: 팀/개인 및 맴버 변경에 따른 상태관리
   const handleTeamChange = (
     isTeamProject: boolean,
     teamProjectMembers: Imember[]
   ) => {
-    const memberIds = teamProjectMembers.map((member) => ({ id: member.id }));
+    // memo지혜: 맴버 {id: number} 의 배열형태로 배열생성
+    const memberIds = teamProjectMembers.map(({ id }) => ({ id }));
     setFormData((prevData) => ({
       ...prevData,
       isTeamProject,
-      teamProjectMembers: memberIds,
+      teamProjectMembers: memberIds as IdNumberArr,
     }));
   };
 
-  const handleSubmit = async (event: React.MouseEvent<HTMLButtonElement>) => {
+  // memo지혜: 생성 폼 제출
+  const handleSubmit = async (event: React.MouseEvent<HTMLInputElement>) => {
     event.preventDefault();
-    const imageData = new FormData();
-    const {
-      isTeamProject,
-      ownerId,
-      projectCategories,
-      projectImgs,
-      teamProjectMembers,
-    } = formData;
-
-    if (projectImgs) {
-      projectImgs.forEach((projectImg) => {
-        imageData.append("file", projectImg);
-      });
-    }
 
     const title = titleRef.current?.value;
     const description = descriptionRef.current?.value;
     const githubLink = githubLinkRef.current?.value;
+
+    const { isTeamProject, projectCategories, teamProjectMembers } = formData;
+
+    // memo지혜: validation
     if (
       !title ||
       !description ||
       !githubLink ||
       projectCategories.length < 1 ||
-      projectImgs.length < 1 ||
-      teamProjectMembers.length < 1
+      imageFiles.length < 1 ||
+      (isTeamProject && teamProjectMembers.length < 1)
     ) {
-      alert("모두 입력해주세요.");
+      alert("모든 입력창에 값을 넣어주세요.");
       return;
     }
-    // console.log(
-    //   title,
-    //   description,
-    //   githubLink,
-    //   isTeamProject,
-    //   ownerId,
-    //   projectCategories,
-    //   teamProjectMembers
-    // );
-    const res = await axios.post(
-      `${process.env.REACT_APP_API_URL}/project/create`,
-      {
-        title,
-        description,
-        githubLink,
-        isTeamProject,
-        ownerId,
-        projectCategories,
-        teamProjectMembers,
-      },
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `${getToken()}`,
-        },
-      }
-    );
-    const createdId = res.data.id;
 
-    // await axios.post(
-    //   `${process.env.REACT_APP_API_URL}/project/create`,
-    //   imageData,
-    //   {
-    //     headers: {
-    //       "Content-Type": "multipart/form-data",
-    //       "Access-Control-Allow-Origin": "*",
-    //     },
-    //   }
-    // );
-    navigate(`/read/${createdId}`);
+    // memo지혜: 생성 or 수정 폼
+    const postData = {
+      title,
+      description,
+      githubLink,
+      isTeamProject,
+      ownerId: Number(userId),
+      projectCategories,
+      projectImgs,
+      teamProjectMembers,
+    } as PostFormData;
+
+    // memo지혜: 생성 or 수정 폼 api호출
+    if (!edit) {
+      createMutate(postData);
+    } else {
+      updateMutate(postData);
+    }
   };
 
   return (
-    <>
-      <Header />
+    <Layout>
       <PostContainer>
         <PostForm>
           <PostContent>
@@ -140,18 +135,23 @@ const Post = () => {
               type="text"
               ref={titleRef}
               placeholder="프로젝트 제목을 입력하세요."
+              defaultValue={edit && project ? project.title : ""}
             />
             <PostDescription
               id="description"
               ref={descriptionRef}
               placeholder="프로젝트에 대한 설명을 입력하세요."
+              defaultValue={edit && project ? project.description : ""}
             />
             <div>
               <Section>
                 <Label>이미지</Label>
                 <ImageFiles
-                  onFilesChange={(newFiles: File[]) =>
+                  onFilesChange={(newFiles: IdNumberArr) =>
                     handleImageChange(newFiles)
+                  }
+                  defaultimages={
+                    edit && project ? project.projectImgs : undefined
                   }
                 />
               </Section>
@@ -159,12 +159,19 @@ const Post = () => {
                 onChangeCategory={(projectCategories: Icategory[]) =>
                   handleCategoryChange(projectCategories)
                 }
+                defaultCategories={
+                  edit && project ? project.projectCategories : undefined
+                }
               />
               <TeamInput
                 onChagneTeam={(
                   isTeamProject: boolean,
                   teamProjectMembers: Imember[]
                 ) => handleTeamChange(isTeamProject, teamProjectMembers)}
+                defaultIsTeam={edit && project ? project?.isTeamProject : true}
+                defaultTeamMember={
+                  edit && project ? project.teamProjectMembers : undefined
+                }
               />
               <Section>
                 <Label>GITHUB</Label>
@@ -174,26 +181,29 @@ const Post = () => {
                     type="text"
                     ref={githubLinkRef}
                     placeholder="https://github.com/..."
+                    defaultValue={edit && project ? project.githubLink : ""}
                   />
                 </SectionRow>
               </Section>
             </div>
           </PostContent>
-          <PostButton type="submit" onClick={handleSubmit}>
-            게시하기
-          </PostButton>
+          <PostButton
+            type="submit"
+            onClick={handleSubmit}
+            value={edit ? "수정하기" : "게시하기"}
+          ></PostButton>
         </PostForm>
       </PostContainer>
-    </>
+    </Layout>
   );
 };
 
-const PostContainer = styled(Container)``;
-const PostForm = styled.form`
-  margin: 14rem 0;
+const PostContainer = styled(Container)`
+  margin: 14rem 0 16rem;
 `;
+const PostForm = styled.form``;
 const PostContent = styled.div`
-  width: 119.6rem;
+  margin: 0 10%;
   border: 1px solid ${({ theme }) => theme.darkgray};
   min-height: 91.5rem;
   border-radius: 2.5rem;
@@ -236,15 +246,13 @@ const PostDescription = styled.textarea`
   resize: none;
   outline: none;
 `;
-const PostButton = styled.button`
-  width: 100%;
+const PostButton = styled(FillButton)`
+  width: 80%;
+  margin: 0 10%;
   border-radius: 2.5rem;
   font-size: 2.5rem;
-  font-weight: 900;
   padding: 2rem;
   margin-top: 4.2rem;
-  background-color: ${({ theme }) => theme.mainGreen};
-  color: white;
 `;
 
 export default Post;

@@ -3,17 +3,20 @@ import styled from "styled-components";
 import StyledList from "./SelectedStyledList";
 import { Section, SectionCol, SectionRow } from "../SectionDirection";
 import { Input, Label } from "../CommonTag";
-import { Imember } from "../../interfaces/IPostFormData";
+import { Imember } from "../../interfaces/IPost";
 import { LoginUser } from "../../interfaces/IUser";
 import { getToken } from "../../utils/token";
 import axios from "axios";
 import TagStyledList from "./TagStyledList";
+import { IgetMember } from "../../interfaces/IDetail";
 
-interface Prop {
+type Props = {
   onChagneTeam: (isTeamProject: boolean, teamProjectMembers: Imember[]) => void;
-}
+  defaultIsTeam: boolean;
+  defaultTeamMember: IgetMember[] | undefined;
+};
 
-const TeamInput = ({ onChagneTeam }: Prop) => {
+const TeamInput = ({ onChagneTeam, defaultIsTeam }: Props) => {
   const [teamProj, setTeamProj] = useState<boolean>(true);
   //memo지혜: 선택한 맴버배열 상태
   const [selectedMembers, setSelectedMembers] = useState<Imember[]>([]);
@@ -22,19 +25,26 @@ const TeamInput = ({ onChagneTeam }: Prop) => {
 
   function handleSelect(e: React.MouseEvent<HTMLInputElement>) {
     const value = (e.target as HTMLInputElement).value;
-    setTeamProj(value === "true");
-    value === "true" && setSelectedMembers([]);
+    const isTeam = value === "true";
+
+    setTeamProj(isTeam);
+    !isTeam && setSelectedMembers([]);
   }
 
   const handleAddMember = (id: number, nickname: string) => {
     // console.log(selectedMembers, id, nickname);
     const alreadySelected = selectedMembers.some((member) => member.id === id);
-    //memo지혜: 선택된 맴버일 경우 선택하지 못함.
-    if (alreadySelected) {
-      alert(`이미 선택된 멤버입니다.`);
-      return;
+
+    //teamProj : true >  팀 > 맴버선택
+    //         : false > 개인 > 맴버선택x
+    if (teamProj) {
+      //memo지혜: 선택된 맴버일 경우 선택하지 못함.
+      if (alreadySelected) {
+        alert(`이미 선택된 멤버입니다.`);
+        return;
+      }
+      setSelectedMembers([...selectedMembers, { id, nickname }]);
     }
-    setSelectedMembers([...selectedMembers, { id, nickname }]);
   };
 
   function handleRemoveMember(memberId: number) {
@@ -54,9 +64,13 @@ const TeamInput = ({ onChagneTeam }: Prop) => {
         { headers: { Authorization: `${getToken()}` } }
       );
       const result = res.data;
-      console.log(result);
-      if (result) {
-        setMembers([...result.users]);
+      const { userList } = result;
+      if (userList) {
+        const allMembers = userList.map(({ id, nickname }: Imember) => ({
+          id,
+          nickname,
+        }));
+        setMembers(allMembers);
       }
     }
     featchData();
@@ -74,7 +88,7 @@ const TeamInput = ({ onChagneTeam }: Prop) => {
               type="radio"
               value="true"
               onClick={handleSelect}
-              defaultChecked={teamProj}
+              defaultChecked={defaultIsTeam}
             />
             <label htmlFor="select1">팀</label>
             <TeamButton
@@ -83,6 +97,7 @@ const TeamInput = ({ onChagneTeam }: Prop) => {
               type="radio"
               value="false"
               onClick={handleSelect}
+              defaultChecked={!defaultIsTeam}
             />
             <label htmlFor="select2">개인</label>
           </ButtonGroup>

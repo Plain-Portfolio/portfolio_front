@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { Icategory, Imember } from "../../interfaces/IPostFormData";
+import { Icategory, Imember } from "../../interfaces/IPost";
 import { Item, List } from "../CommonTag";
 
 // memo지혜: 선택된 카테고리와 맴버를 나열하는데 공통을 사용되는 컴포넌트
