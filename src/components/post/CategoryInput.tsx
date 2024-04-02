@@ -4,16 +4,17 @@ import { Label } from "../CommonTag";
 import StyledList from "./SelectedStyledList";
 import TagStyledList from "./TagStyledList";
 import InputWithEnter from "./InputWithEnter";
-import { Icategory } from "../../interfaces/IPostFormData";
+import { Icategory } from "../../interfaces/IPost";
 import { getToken } from "../../utils/token";
 import styled from "styled-components";
 import axios from "axios";
 
-interface Prop {
+type Props = {
   onChangeCategory: (categories: Icategory[]) => void;
-}
+  defaultCategories: Icategory[] | undefined;
+};
 
-const CategoryInput = ({ onChangeCategory }: Prop) => {
+const CategoryInput = ({ onChangeCategory, defaultCategories }: Props) => {
   const categoryRef = useRef<HTMLInputElement>(null);
   const [categories, setCategories] = useState<Icategory[]>();
   const [selectedCategories, setSelectedCategories] = useState<Icategory[]>([]);
@@ -33,13 +34,13 @@ const CategoryInput = ({ onChangeCategory }: Prop) => {
     const createdId = res.data.id;
     setSelectedCategories([...selectedCategories, { id: createdId, name }]);
   };
-
+  // memo지혜: 카테고리 선택해제
   function handleRemoveCategory(categoryId: number) {
     setSelectedCategories(
       selectedCategories.filter((c) => c.id !== categoryId)
     );
   }
-
+  // memo지혜: 카테고리 선택
   function selectCategory(categoryId: number, categoryName: string) {
     setSelectedCategories((prev) => [
       ...prev,
@@ -58,13 +59,19 @@ const CategoryInput = ({ onChangeCategory }: Prop) => {
       const res = await axios.get(
         `${process.env.REACT_APP_API_URL}/category/list`
       );
-      const result = res.data;
+      const result = res.data.categories;
       if (result.length > 0) {
-        setCategories([...result]);
+        setCategories(result);
       }
     }
     featchData();
   }, []);
+
+  useEffect(() => {
+    if (defaultCategories) {
+      setSelectedCategories(defaultCategories);
+    }
+  }, [defaultCategories]);
 
   return (
     <Section>
