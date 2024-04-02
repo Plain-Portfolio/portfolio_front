@@ -2,12 +2,11 @@ import styled, { css } from "styled-components";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
+import { toast } from "react-toastify";
 import { useMutation } from "@tanstack/react-query";
 import { Input } from "./CommonTag";
 import { SectionCol } from "./SectionDirection";
-import { LoginResponse, User } from "../interfaces/IUser";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { User } from "../interfaces/IUser";
 
 interface LoginTitleProps {
   $social?: boolean;
@@ -16,39 +15,17 @@ interface LoginTitleProps {
 const loginSchema = yup.object({
   email: yup
     .string()
-    .matches(/^[^@\s]+@[^@\s]+.[^@\s]+$/, "이메일 형식을 맞춰서 입력해주세요.")
+    .matches(/^[^@\s]+@[^@\s]+\.[^@\s]+$/, "이메일 형식을 맞춰서 입력해주세요.")
     .required("이메일을 입력해주세요."),
-  password: yup.string().required("비밀번호를 입력해주세요."),
-  // .matches(
-  //   /\$2(a|y|b)?\$(\d\d)\$[./0-9A-Za-z]{53}/,
-  //   "비밀번호는 10자 이상이어야 하며, 영문 대문자, 숫자, 특수문자를 각각 1개 이상 포함해야 합니다."
-  // ),
+  password: yup
+    .string()
+    .required("비밀번호를 입력해주세요.")
+    .matches(
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{10,}$/,
+      "비밀번호는 10자 이상이어야 하며, 영문 대문자, 숫자, 특수문자를 각각 1개 이상 포함해야 합니다."
+    )
+    .min(10, "비밀번호는 최소 10자 이상이어야 합니다."),
 });
-
-const loginMutation = async (data: User) => {
-  const response = await axios.post(
-    `http://158.247.243.170:8080/user/login`,
-    data
-  );
-  return response.data as LoginResponse;
-};
-
-const useLogin = () => {
-  const navigate = useNavigate();
-
-  const { mutate } = useMutation({
-    mutationFn: loginMutation,
-    onSuccess: (data) => {
-      localStorage.setItem("token", data.token);
-      navigate("/"); // Or handle success however you like
-    },
-    onError: (error) => {
-      // Handle login errors here (e.g., display error message)
-      console.error("Login Error:", error);
-    },
-  });
-  return { mutate };
-};
 
 function LoginContent() {
   const {
@@ -60,10 +37,27 @@ function LoginContent() {
     resolver: yupResolver(loginSchema),
   });
 
-  const { mutate } = useLogin();
+  const { mutate, isError, error, isSuccess } = useMutation({
+    mutationFn: (user: User) =>
+      fetch("/user/login", {
+        method: "POST",
+        body: JSON.stringify({ ...user }),
+      }),
+    onSuccess: (data) => {
+      console.log("성공");
+      console.log(data);
+      //localStorage.setItem("accessToken", res.token);
+      // return data;
+    },
+    onError: (error) => {
+      console.log("실패", error);
+      toast.warning("이메일과 비밀번호를 확인해주세요");
+    },
+  });
 
-  const onSubmit = (data: User) => {
-    mutate(data);
+  const onSubmit = async (data: User) => {
+    const res = mutate(data);
+    console.log(res);
   };
 
   return (

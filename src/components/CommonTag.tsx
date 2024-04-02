@@ -17,13 +17,24 @@ const Input = styled.input`
   ${({ disabled, theme }) => disabled && `background-color: ${theme.darkgray}`}
 `;
 const Button = styled.input`
+  font-weight: 900;
   cursor: pointer;
   flex-basis: 10rem;
-  background-color: white;
-  border: 1px solid ${({ theme }) => theme.mainGreen};
   border-radius: 1.5rem;
-  font-weight: 900;
+  border: none;
 `;
+const BorderButton = styled(Button)`
+  background-color: white;
+  border: 0.2rem solid ${({ theme }) => theme.mainGreen};
+`;
+const FillButton = styled(Button)`
+  color: white;
+  background-color: ${({ theme }) => theme.mainGreen};
+  &:hover {
+    background-color: ${({ theme }) => theme.darkGreen};
+  }
+`;
+
 const Label = styled.label`
   font-size: 1.8rem;
   font-weight: 900;
@@ -31,4 +42,42 @@ const Label = styled.label`
   flex-shrink: 0;
 `;
 
-export { Input, Button, Label };
+const Container = styled.div`
+  display: flex;
+  justify-content: center;
+`;
+
+const List = styled.ul`
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  margin: 0.5rem 0;
+  min-height: 3rem;
+`;
+const Item = styled.li<{ color?: string }>`
+  height: 2.8rem;
+  border-radius: 2rem;
+  margin-right: 0.8rem;
+  padding: 0.5rem 1.5rem;
+  border: 1px solid ${({ theme }) => theme.darkgry};
+  line-height: 1.5rem;
+  cursor: pointer;
+
+  ${({ theme, color }) =>
+    color &&
+    `
+    background-color: ${theme[color]}; 
+    color: white;
+  `}
+`;
+
+export {
+  Input,
+  Button,
+  BorderButton,
+  FillButton,
+  Label,
+  Container,
+  List,
+  Item,
+};
