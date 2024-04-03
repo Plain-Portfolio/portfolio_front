@@ -3,9 +3,7 @@ import styled from "styled-components";
 import Header from "../../components/Header/Header";
 import JoinInputSection from "../../components/JoinInputSection/JoinInputSection";
 import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
 import axios from "axios";
-import { error } from "console";
 import { showToast } from "../../styles/Toast";
 
 type UserInfo = {
@@ -77,24 +75,24 @@ const Join = () => {
     },
     [userInfo]
   );
-  // const onNavigate = () => {
-  //   navigate("/login");
-  // };
   const onJoin = useCallback(async () => {
     if (!CheckAll()) {
       await axios
-        .post("http://158.247.243.170:8080/user/signup", {
+        .post(`${process.env.REACT_APP_API_URL}/user/signup`, {
           email: userInfo.email,
           password: userInfo.password,
           nickname: userInfo.nickname,
         })
         .then((res) => {
           if (res.data.id) {
-            navigate("/");
+            navigate("/login");
           }
         })
         .catch((error) => {
-          if (error.response.data.code === 401) {
+          console.log(error.response.data);
+          if (error.response.data.status === 1002) {
+            showToast({ type: "error", message: "닉네임이 중복되었습니다." });
+          } else if (error.response.data.status === 1001) {
             showToast({ type: "error", message: "이메일이 중복되었습니다." });
           }
         });
@@ -102,7 +100,7 @@ const Join = () => {
   }, [userInfo.nickname, userInfo.email, userInfo.password, CheckAll]);
   return (
     <JoinPage>
-      <Header />
+      <Header type="Login" />
       <Wrapper>
         <Container>
           <Title>Signup</Title>
@@ -135,10 +133,6 @@ const Join = () => {
             <Social />
           </SocialContent>
         </Container>
-        {/* <LoginNavWrapper>
-          회원이신가요?
-          <LoginNav onClick={onNavigate}>로그인하러가기</LoginNav>
-        </LoginNavWrapper> */}
       </Wrapper>
     </JoinPage>
   );
@@ -196,6 +190,7 @@ const Container = styled.div`
   gap: 1.5rem;
   padding: 0 4.8rem;
   box-sizing: border-box;
+  box-shadow: 0.2rem 0.2rem 0.8rem rgba(0, 0, 0, 0.3);
 `;
 const Title = styled.div`
   font-size: 3rem;
@@ -210,7 +205,7 @@ const JoinButton = styled.button`
   color: white;
   font-size: 1.8rem;
   font-weight: 700;
-  border-radius: 2.5rem;
+  border-radius: 1rem;
   cursor: pointer;
   background-color: ${(props) => (props.disabled ? "#d3d3d3" : "#39bc56")};
 `;

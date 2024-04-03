@@ -1,9 +1,11 @@
 import styled from "styled-components";
 import LoginContent from "../components/LoginContent";
+import Header from "../components/Header/Header";
 
 export default function Login() {
   return (
     <LoginContainer>
+      <Header type="Join" />
       <LoginContent />
       <LinkToJoin>
         아직 회원이 아니신가요? <a href="/join">회원가입하러가기</a>
@@ -18,6 +20,7 @@ const LoginContainer = styled.main`
   justify-content: center;
   align-items: center;
   min-height: 100vh;
+  padding: 14rem 0 7.4rem 0;
 `;
 
 const LinkToJoin = styled.p`
