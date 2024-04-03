@@ -192,7 +192,7 @@ const Badge = styled.span`
   border-radius: 1rem;
   padding: 1rem;
   color: white;
-  background-color: ${({ theme }) => theme.mainGreen};
+  background-color: ${({ theme }) => theme.color.mainGreen};
 `;
 const Author = styled.span`
   font-size: 1.2rem;
@@ -204,8 +204,8 @@ const ReadBorder = styled.div`
   height: 100%;
   padding: 4.9rem 4.7rem;
   border-radius: 2.5rem;
-  border: 1px solid ${({ theme }) => theme.darkgray};
-  background-color: ${({ theme }) => theme.lightgray};
+  border: 1px solid ${({ theme }) => theme.color.darkgray};
+  background-color: ${({ theme }) => theme.color.lightgray};
 `;
 const ButtonGruop = styled.div`
   display: flex;
@@ -219,7 +219,7 @@ const ButtonGruop = styled.div`
 const CommonButton = styled(Button)`
   flex-basis: 7rem;
   padding: 1rem;
-  border: 0.3rem solid ${({ theme }) => theme.darkGreen};
+  border: 0.3rem solid ${({ theme }) => theme.color.darkGreen};
 `;
 const UpdButton = styled(CommonButton)``;
 const DelButton = styled(CommonButton)``;

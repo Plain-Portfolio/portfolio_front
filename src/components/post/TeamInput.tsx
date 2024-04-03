@@ -145,11 +145,11 @@ const TeamButton = styled.input`
     flex-basis: 6.5rem;
     flex-shrink: 0;
     margin-right: 1rem;
-    border: 1px solid ${({ theme }) => theme.mainGreen};
+    border: 1px solid ${({ theme }) => theme.color.mainGreen};
     border-radius: 1.5rem;
   }
   &[type="radio"]:checked + label {
-    background-color: ${({ theme }) => theme.mainGreen};
+    background-color: ${({ theme }) => theme.color.mainGreen};
     color: white;
   }
 `;
