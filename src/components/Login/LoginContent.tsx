@@ -27,7 +27,7 @@ const loginSchema = yup.object({
 
 const loginMutation = async (data: User) => {
   const response = await axios.post(
-    `http://158.247.243.170:8080/user/login`,
+    `${process.env.REACT_APP_API_URL}/user/login`,
     data
   );
   return response.data as LoginResponse;
@@ -40,10 +40,10 @@ const useLogin = () => {
     mutationFn: loginMutation,
     onSuccess: (data) => {
       localStorage.setItem("token", data.token);
-      navigate("/"); // Or handle success however you like
+      localStorage.setItem("user_id", String(data.user.id));
+      navigate("/");
     },
     onError: (error) => {
-      // Handle login errors here (e.g., display error message)
       console.error("Login Error:", error);
     },
   });

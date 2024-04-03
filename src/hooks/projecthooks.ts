@@ -68,7 +68,7 @@ export const useProjectData = (projectId: string | undefined) => {
   const { mutate: createMutate } = useMutation({
     mutationFn: createProject,
     onSuccess: (data) => {
-      navigate(`/read/${data.id}`);
+      navigate(`/read/${data.projectId}`);
     },
     onError: (error) => {
       console.error("Error deleting project:", error);
