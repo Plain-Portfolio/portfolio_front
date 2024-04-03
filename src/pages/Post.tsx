@@ -114,8 +114,9 @@ const Post = () => {
       ownerId: Number(userId),
       projectCategories,
       teamProjectMembers,
-      imageFiles,
+      projectImgs: imageFiles,
     } as PostFormData;
+    console.log(postData);
 
     // memo지혜: 생성 or 수정 폼 api호출
     if (!edit) {
@@ -204,7 +205,7 @@ const PostContainer = styled(Container)`
 const PostForm = styled.form``;
 const PostContent = styled.div`
   margin: 0 10%;
-  border: 1px solid ${({ theme }) => theme.darkgray};
+  border: 1px solid ${({ theme }) => theme.color.darkgray};
   min-height: 91.5rem;
   border-radius: 2.5rem;
   padding: 4.9rem 4.7rem;
@@ -221,7 +222,7 @@ const PostContent = styled.div`
 const PostTitle = styled.input`
   width: 100%;
   border: none;
-  border-bottom: 0.2rem solid ${({ theme }) => theme.darkgray};
+  border-bottom: 0.2rem solid ${({ theme }) => theme.color.darkgray};
   padding: 1rem;
   font-size: 2.5rem;
   font-weight: 900;
@@ -238,7 +239,7 @@ const PostTitle = styled.input`
 const PostDescription = styled.textarea`
   width: 100%;
   height: 57.9rem;
-  border: 1px solid ${({ theme }) => theme.darkgray};
+  border: 1px solid ${({ theme }) => theme.color.darkgray};
   border-radius: 2.5rem;
   margin: 6.42rem 0;
   padding: 3.3rem 2.2rem;
