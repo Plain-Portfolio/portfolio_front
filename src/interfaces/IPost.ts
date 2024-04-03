@@ -5,9 +5,9 @@ interface PostFormData {
   githubLink?: string;
   isTeamProject: boolean;
   ownerId?: number;
-  projectCategories: IdNumberArr;
+  projectCategories: { categoryId: number }[];
   projectImgs?: IdNumberArr;
-  teamProjectMembers: IdNumberArr;
+  teamProjectMembers: { userId: number }[];
 }
 interface idNumber {
   id: number;
