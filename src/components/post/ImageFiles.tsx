@@ -205,7 +205,7 @@ const ImagePreviewBoard = styled.div`
   overflow-y: scroll;
   border-radius: 1.5rem;
   margin-top: 2rem;
-  background-color: ${({ theme }) => theme.lightgray};
+  background-color: ${({ theme }) => theme.color.lightgray};
   padding: 1.3rem 1rem;
   & > label {
     font-weight: 900;

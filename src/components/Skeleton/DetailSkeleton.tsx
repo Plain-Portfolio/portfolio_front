@@ -55,8 +55,8 @@ const ReadBorder = styled.div`
   min-height: 100vh;
   padding: 4.9rem 4.7rem;
   border-radius: 2.5rem;
-  border: 1px solid ${({ theme }) => theme.darkgray};
-  background-color: ${({ theme }) => theme.lightgray};
+  border: 1px solid ${({ theme }) => theme.color.darkgray};
+  background-color: ${({ theme }) => theme.color.lightgray};
 `;
 const ReadContent = styled(SectionRow)`
   height: 92%;
