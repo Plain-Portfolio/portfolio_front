@@ -1,6 +1,5 @@
 import React, { useCallback, useState } from "react";
 import styled from "styled-components";
-import Header from "../../components/Header/Header";
 import JoinInputSection from "../../components/JoinInputSection/JoinInputSection";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";

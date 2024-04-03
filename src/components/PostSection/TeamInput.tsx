@@ -28,7 +28,7 @@ const TeamInput = ({
   //memo지혜: 모든 유저에 대한 배열 상태 ( 선택할 수 있는 맴버들)
   const [members, setMembers] = useState<LoginUser[]>([]);
 
-  function handleSelect(e: React.MouseEvent<HTMLInputElement>) {
+  function handleSelect(e: React.ChangeEvent<HTMLInputElement>) {
     const value = (e.target as HTMLInputElement).value;
     const isTeam = value === "true";
 
@@ -82,7 +82,8 @@ const TeamInput = ({
   }, []);
 
   useEffect(() => {
-    if (defaultTeamMember.length > 0) {
+    // memo지혜: 팀프로젝트
+    if (typeof defaultIsTeam === "boolean" && defaultTeamMember.length > 0) {
       const renameTeamMember = defaultTeamMember.map(
         ({ userId, nickname }) => ({
           id: userId,
@@ -90,7 +91,16 @@ const TeamInput = ({
         })
       );
       setSelectedMembers(renameTeamMember);
+      setTeamProj(true);
     }
+    //memo지혜: 개인프로젝트
+    else if (
+      typeof defaultIsTeam === "boolean" &&
+      defaultTeamMember.length === 0
+    ) {
+      setTeamProj(false);
+    }
+    //memo지혜 : defaultIsTeam가 undefined면 기본값 true
   }, [defaultTeamMember, defaultIsTeam]);
 
   return (
@@ -105,8 +115,8 @@ const TeamInput = ({
                 name="type"
                 type="radio"
                 value="true"
-                onClick={handleSelect}
-                defaultChecked={defaultIsTeam}
+                onChange={handleSelect}
+                checked={teamProj}
               />
               <label htmlFor="select1">팀</label>
             </>
@@ -116,8 +126,8 @@ const TeamInput = ({
                 name="type"
                 type="radio"
                 value="false"
-                onClick={handleSelect}
-                defaultChecked={!defaultIsTeam}
+                onChange={handleSelect}
+                checked={!teamProj}
               />
               <label htmlFor="select2">개인</label>
             </>

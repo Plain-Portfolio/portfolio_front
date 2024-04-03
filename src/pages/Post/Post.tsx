@@ -1,19 +1,25 @@
 import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Section, SectionRow } from "../components/SectionDirection";
-import { Container, FillButton, Input, Label } from "../components/CommonTag";
-import ImageFiles from "../components/Post/ImageFiles";
-import CategoryInput from "../components/Post/CategoryInput";
-import TeamInput from "../components/Post/TeamInput";
-import Layout from "../components/Layout/Layout";
+import { Section, SectionRow } from "../../components/SectionDirection";
+import {
+  Container,
+  FillButton,
+  Input,
+  Label,
+} from "../../components/CommonTag";
+import ImageFiles from "../../components/PostSection/ImageFiles";
+import CategoryInput from "../../components/PostSection/CategoryInput";
+import TeamInput from "../../components/PostSection/TeamInput";
+import Layout from "../../components/Layout/Layout";
 import {
   Icategory,
   IdNumberArr,
   Imember,
   PostFormData,
-} from "../interfaces/IPost";
-import { Iproject } from "../interfaces/IDetail";
-import { useProjectData } from "../hooks/projecthooks";
+  UpdateFormData,
+} from "../../interfaces/IPost";
+import { Iproject } from "../../interfaces/IDetail";
+import { useProjectData } from "../../hooks/projecthooks";
 import styled from "styled-components";
 
 const Post = () => {
@@ -48,7 +54,7 @@ const Post = () => {
   //          data는 기본 undefined로 data를 받아온 경우에서 setting됨
   useEffect(() => {
     data && setProject(data);
-    // console.log(data);
+    console.log(data);
   }, [data]);
 
   // memo지혜: 이미지 변경에 따른 상태관리
@@ -92,22 +98,8 @@ const Post = () => {
     const githubLink = githubLinkRef.current?.value;
 
     const { isTeamProject, projectCategories, teamProjectMembers } = formData;
-
-    // memo지혜: validation
-    if (
-      !title ||
-      !description ||
-      !githubLink ||
-      projectCategories.length < 1 ||
-      imageFiles.length < 1 ||
-      (isTeamProject && teamProjectMembers.length < 1)
-    ) {
-      alert("모든 입력창에 값을 넣어주세요.");
-      return;
-    }
-
     // memo지혜: 생성 or 수정 폼
-    const postData = {
+    let postData = {
       title,
       description,
       githubLink,
@@ -116,14 +108,27 @@ const Post = () => {
       projectCategories,
       teamProjectMembers,
       projectImgs: imageFiles,
-    } as PostFormData;
+    } as PostFormData & UpdateFormData;
     console.log(postData);
+
+    // memo지혜: validation
+    if (
+      !title ||
+      !description ||
+      !githubLink ||
+      projectCategories.length < 1 ||
+      (isTeamProject && teamProjectMembers.length < 1)
+    ) {
+      alert("모든 입력창에 값을 넣어주세요.");
+      return;
+    }
 
     // memo지혜: 생성 or 수정 폼 api호출
     if (!edit) {
-      createMutate(postData);
+      createMutate(postData as PostFormData);
     } else {
-      updateMutate(postData);
+      postData["projectId"] = Number(projectId);
+      updateMutate(postData as UpdateFormData);
     }
   };
 
@@ -170,7 +175,9 @@ const Post = () => {
                   isTeamProject: boolean,
                   teamProjectMembers: Imember[]
                 ) => handleTeamChange(isTeamProject, teamProjectMembers)}
-                defaultIsTeam={edit && project && project.isTeamProject}
+                defaultIsTeam={
+                  edit && project ? project.isTeamProject : undefined
+                }
                 defaultTeamMember={
                   edit && project ? project.teamProjectMembers : []
                 }
@@ -248,8 +255,7 @@ const PostDescription = styled.textarea`
   outline: none;
 `;
 const PostButton = styled(FillButton)`
-  width: 80%;
-  margin: 0 10%;
+  width: 100%;
   border-radius: 2.5rem;
   font-size: 2.5rem;
   padding: 2rem;

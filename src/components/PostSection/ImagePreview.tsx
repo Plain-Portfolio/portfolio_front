@@ -9,7 +9,10 @@ const ImagePreview = ({ files }: Props) => {
       <PreviewList>
         {files.map((file) => (
           <PreviewItme key={file.id}>
-            <PreviewImg src={file.imageSrc} alt={file.alt} />
+            <PreviewImg
+              src={file.src ? file.src : file.imageSrc}
+              alt={file.alt}
+            />
           </PreviewItme>
         ))}
       </PreviewList>

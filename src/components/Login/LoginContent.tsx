@@ -6,10 +6,23 @@ import { useMutation } from "@tanstack/react-query";
 import { Input } from "../CommonTag";
 import { SectionCol } from "../SectionDirection";
 import { LoginResponse, User } from "../../interfaces/IUser";
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 import { useNavigate } from "react-router-dom";
-import { useContext } from "react";
-import { AuthContext } from "../AuthContext";
+import { useCallback, useContext, useEffect } from "react";
+import { AuthContext } from "../Context/AuthContext";
+import { showToast } from "../../styles/Toast";
+// import NaverLogin from "./NaverLogin";
+
+type ErrorCodesType = {
+  [key in number]: string;
+};
+
+const ErrorCodes: ErrorCodesType = {
+  402: "아이디 또는 비밀번호가 올바르지 않습니다.",
+  403: "접근 권한이 없습니다.",
+  404: "요청한 페이지를 찾을 수 없습니다.",
+  500: "서버 오류입니다.",
+};
 
 interface LoginTitleProps {
   $social?: boolean;
@@ -18,13 +31,18 @@ interface LoginTitleProps {
 const loginSchema = yup.object({
   email: yup
     .string()
-    .matches(/^[^@\s]+@[^@\s]+.[^@\s]+$/, "이메일 형식을 맞춰서 입력해주세요.")
+    .matches(
+      /^[A-Za-z0-9_]+[A-Za-z0-9][@]{1}[A-Za-z0-9]+[A-Za-z0-9][.]{1}[A-Za-z]{1,3}$/,
+      "이메일 형식을 맞춰서 입력해주세요."
+    )
     .required("이메일을 입력해주세요."),
-  password: yup.string().required("비밀번호를 입력해주세요."),
-  // .matches(
-  //   /\$2(a|y|b)?\$(\d\d)\$[./0-9A-Za-z]{53}/,
-  //   "비밀번호는 10자 이상이어야 하며, 영문 대문자, 숫자, 특수문자를 각각 1개 이상 포함해야 합니다."
-  // ),
+  password: yup
+    .string()
+    .required("비밀번호를 입력해주세요.")
+    .matches(
+      /^(?=.?[A-Z])(?=.?[a-z])(?=.?[0-9])(?=.?[#?!@$ %^&*-]).{10,}$/,
+      "비밀번호는 10자 이상이어야 하며, 영문 대문자, 숫자, 특수문자를 각각 1개 이상 포함해야 합니다."
+    ),
 });
 
 const loginMutation = async (data: User) => {
@@ -35,21 +53,41 @@ const loginMutation = async (data: User) => {
   return response.data as LoginResponse;
 };
 
+const getErrorMessage = (code: number) => {
+  return ErrorCodes[code] || "알 수 없는 오류입니다.";
+};
+
 const useLogin = () => {
   const { login } = useContext(AuthContext);
   const navigate = useNavigate();
 
+  const handleLoginSuccess = (data: LoginResponse) => {
+    login({
+      token: data.token,
+      user: {
+        userId: String(data.userId),
+        email: data.email,
+        nickname: data.nickname,
+      },
+    });
+  };
+
   const { mutate } = useMutation({
     mutationFn: loginMutation,
-    onSuccess: (data) => {
-      // console.log(data);
-      login({
-        token: data.token,
-        user: { userId: String(data.userId), email: data.email },
+    onSuccess: (data: LoginResponse) => {
+      handleLoginSuccess(data);
+
+      showToast({
+        type: "success",
+        message: "로그인 성공했습니다.",
       });
       navigate("/");
     },
-    onError: (error) => {
+    onError: (error: any) => {
+      const response = error.response as AxiosResponse;
+      const code = response.data.code;
+      const ErrorMessage = getErrorMessage(code);
+      showToast({ type: "error", message: ErrorMessage });
       console.error("Login Error:", error);
     },
   });
@@ -71,6 +109,15 @@ function LoginContent() {
   const onSubmit = (data: User) => {
     mutate(data);
   };
+  async function handleSocialNaver() {
+    // const link = `https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=CxtDFeqMnHFuBrnPCZKo&state=abcdef123456&redirect_uri=http://localhost:3000/user/login/naver/callback`;
+    // window.location.href = link;
+  }
+
+  async function handleSocialKakao() {
+    const link = `https://kauth.kakao.com/oauth/authorize?client_id=${process.env.REACT_APP_REST_KAKAO_API_KEY}&redirect_uri=${process.env.REACT_APP_REDIRECT_KAKAO_URI}&response_type=code`;
+    window.location.href = link;
+  }
 
   return (
     <LoginForm onSubmit={handleSubmit(onSubmit)}>
@@ -100,8 +147,17 @@ function LoginContent() {
         <Horizontal />
         <LoginTitle $social>social login</LoginTitle>
         <SocialIcons>
-          <SocialIcon />
-          <SocialIcon />
+          {/* <NaverLogin /> */}
+          {/* <SocialIcon
+            onClick={handleSocialNaver}
+            src="assets/login/naver_login.png"
+            alt="naver"
+          /> */}
+          <SocialIcon
+            onClick={handleSocialKakao}
+            src="assets/login/kakao_login.png"
+            alt="kakaoLogo"
+          />
         </SocialIcons>
       </SocialLogin>
     </LoginForm>
@@ -156,11 +212,12 @@ const SocialIcons = styled.div`
   justify-content: space-around;
 `;
 
-const SocialIcon = styled.div`
-  width: 5.6rem;
-  height: 5.6rem;
-  border-radius: 3rem;
-  background: ${({ theme }) => theme.color.darkgray};
+const SocialIcon = styled.img`
+  width: 11rem;
+  height: auto;
+  object-fit: cover;
+  overflow: hidden;
+  border-radius: 5rem;
 `;
 
 const Horizontal = styled.hr`
@@ -169,6 +226,7 @@ const Horizontal = styled.hr`
   border: 0;
   margin-top: 3.2rem;
   margin-bottom: 3.9rem;
+  background: ${({ theme }) => theme.color.darkgray};
   background: ${({ theme }) => theme.color.darkgray};
 `;
 

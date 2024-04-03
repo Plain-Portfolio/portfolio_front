@@ -1,11 +1,11 @@
 import React, { useCallback, useEffect, useState } from "react";
 import styled from "styled-components";
+import Header from "../../components/Header/Header";
 import axios from "axios";
 import Layout from "../../components/Layout/Layout";
 import { useNavigate } from "react-router-dom";
 
 type Props = {};
-
 type UserType = {
   email: string;
   id: number;
@@ -14,6 +14,7 @@ type UserType = {
   password: string;
   userImgs: { imgSrc: string; userImgId: number }[];
 };
+
 const Home = (props: Props) => {
   const [userList, setUserList] = useState<UserType[]>([]);
   const navigate = useNavigate();
@@ -134,4 +135,10 @@ const Imgwrapper = styled.div`
 `;
 const AllPortpolio = styled.div`
   font-size: 1.6rem;
+`;
+
+const Name = styled.div`
+  font-size: 1.6rem;
+  font-weight: 700;
+  padding-bottom: 0.4rem;
 `;

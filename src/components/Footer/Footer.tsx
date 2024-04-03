@@ -15,7 +15,7 @@ const Footer = (props: Props) => {
 
 export default Footer;
 
-const StyledHeader = styled.div`
+const StyledHeader = styled.footer`
   width: 100%;
   height: 66px;
   background-color: #39bc56;

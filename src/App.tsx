@@ -1,6 +1,6 @@
 import { Route, Routes } from "react-router-dom";
 import Join from "./pages/Join/Join";
-import Login from "./pages/Login";
+import Login from "./pages/Login/Login";
 import Home from "./pages/Home/Home";
 import { BrowserRouter } from "react-router-dom";
 import { ThemeProvider } from "styled-components";
@@ -9,12 +9,16 @@ import GlobalStyles from "./styles/GlobalStyels";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import CustomToast from "./components/CustomToast";
 import "react-toastify/dist/ReactToastify.min.css";
-import Post from "./pages/Post";
+import Post from "./pages/Post/Post";
 import Detail from "./pages/Detail/Detail";
 import NotFound from "./components/Route/NotFound";
 import PrivateRoute from "./components/Route/PrivateRoute";
-import { AuthProvider } from "./components/AuthContext";
+import { AuthProvider } from "./components/Context/AuthContext";
 import UserProjectList from "./pages/UserProjectList";
+import Redirection from "./pages/Redirection";
+import LikedList from "./pages/LikedList";
+// import NaverRedirection from "./pages/NaverRedirection";
+// import { NaverLoginProvider } from "./components/Context/NaverLoginContext";
 
 const queryClient = new QueryClient();
 
@@ -25,13 +29,23 @@ function App() {
       <CustomToast />
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
+          {/* <NaverLoginProvider> */}
           <BrowserRouter>
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/join" element={<Join />} />
               <Route path="/login" element={<Login />} />
+              <Route
+                path="/user/login/kakao/callback"
+                element={<Redirection />}
+              />
+              {/* <Route
+                  path="/user/login/naver/callback"
+                  element={<NaverRedirection />}
+                /> */}
               <Route path="/read/:id" element={<Detail />} />
-              <Route path="/:userId/project" element={<UserProjectList />} />
+              <Route path="/:userId/projects" element={<UserProjectList />} />
+              <Route path="/likedList" element={<LikedList />} />
               <Route element={<PrivateRoute />}>
                 <Route path="/edit/:id" element={<Post />} />
                 <Route path="/post" element={<Post />} />
@@ -39,6 +53,7 @@ function App() {
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
+          {/* </NaverLoginProvider> */}
         </AuthProvider>
       </QueryClientProvider>
     </ThemeProvider>
