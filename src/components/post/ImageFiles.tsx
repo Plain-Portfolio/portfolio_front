@@ -45,19 +45,20 @@ const renderFileNames = (validFiles: File[]) => {
 const uploadImages = async (files: File[]) => {
   console.log(files);
   const imageData = new FormData();
-  if (files) {
-    files.forEach((file) => {
-      imageData.append("images", file);
-    });
-  }
+  const promises = files.map(async (file) => {
+    imageData.append("images", file);
 
-  const res = await axios.post(
-    `${process.env.REACT_APP_API_URL}/image/upload`,
-    imageData,
-    { headers: { "Content-Type": "multipart/form-data" } }
-  );
+    const res = await axios.post(
+      `${process.env.REACT_APP_API_URL}/image/upload`,
+      imageData,
+      { headers: { "Content-Type": "multipart/form-data" } }
+    );
 
-  return res.data;
+    return res.data;
+  });
+
+  const responseReslut = (await Promise.all(promises)) as IprojectImgs[];
+  return responseReslut;
 };
 
 const ImageFiles = ({ onFilesChange, defaultimages }: Props) => {
@@ -75,12 +76,16 @@ const ImageFiles = ({ onFilesChange, defaultimages }: Props) => {
   const { mutate: uploadMutate } = useMutation({
     mutationFn: () => uploadImages(files),
     onSuccess: (data) => {
+      console.log("upload api");
       // memo지혜: 업로드 성공시 리턴 값 상태에 할당 후, 이미지프리뷰에 사용
-      const imageArr = data as IprojectImgs[];
+      const imageArr = data;
       setUploaded(imageArr);
 
       // memo지혜: 해당 게시글에 속한 이미지 파일 id 배열
-      const idArray = imageArr.map(({ id }) => ({ id }));
+      const idArray = imageArr.map((image) => {
+        return { id: image.id };
+      });
+      console.log("idArray", idArray);
       setFilesIds(idArray);
     },
     onError: (error) => {
@@ -130,6 +135,7 @@ const ImageFiles = ({ onFilesChange, defaultimages }: Props) => {
   function handleReomveFiles() {
     setFileName("");
     setFilesIds([]);
+    setUploaded([]);
   }
 
   // memo지혜: 업로드완료시 id에 대한 배열을 lifting up state
