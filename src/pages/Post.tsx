@@ -59,12 +59,12 @@ const Post = () => {
   const handleCategoryChange = (projectCategories: Icategory[]) => {
     // memo지혜: 카테고리 {id: number} 의 배열형태로 배열생성
     const catgoryIds = projectCategories.map(({ id }) => ({
-      id,
+      categoryId: id,
     }));
 
     setFormData((prevData) => ({
       ...prevData,
-      projectCategories: catgoryIds as IdNumberArr,
+      projectCategories: catgoryIds,
     }));
   };
 
@@ -74,11 +74,11 @@ const Post = () => {
     teamProjectMembers: Imember[]
   ) => {
     // memo지혜: 맴버 {id: number} 의 배열형태로 배열생성
-    const memberIds = teamProjectMembers.map(({ id }) => ({ id }));
+    const memberIds = teamProjectMembers.map(({ id }) => ({ userId: id }));
     setFormData((prevData) => ({
       ...prevData,
       isTeamProject,
-      teamProjectMembers: memberIds as IdNumberArr,
+      teamProjectMembers: memberIds,
     }));
   };
 
@@ -114,6 +114,7 @@ const Post = () => {
       ownerId: Number(userId),
       projectCategories,
       teamProjectMembers,
+      imageFiles,
     } as PostFormData;
 
     // memo지혜: 생성 or 수정 폼 api호출
