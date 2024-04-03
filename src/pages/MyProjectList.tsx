@@ -5,13 +5,12 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { ProjectData } from "../interfaces/IProjectData";
 
-// axios.get.ProjectData
-const fetchProjectData = async (userId: number) => {
+const fetchProjectData = async (userId: string) => {
   try {
     const response = await axios.get<ProjectData[]>(
-      `http://158.247.243.170:8080/project/${userId}/projects`
+      `${process.env.REACT_APP_API_URL}/project/${userId}/projects`
     );
-    //console.log(response);
+    console.log(response);
     return response.data;
   } catch (error) {
     console.log("Error fetching projects: ", error);
@@ -25,7 +24,7 @@ function MyProject() {
     null
   );
 
-  const userId = 21; //IUserts > LoginUser.id
+  const userId = localStorage.getItem("user_id") as string;
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -33,33 +32,48 @@ function MyProject() {
       const projectData = await fetchProjectData(userId);
       setProjects(projectData);
     };
-    fetchProjects();
+    if (userId) {
+      fetchProjects();
+    }
   }, [userId]);
+
+  const handleShowSummary = (idx: number) => {
+    setSelectedProjectIdx(idx === selectedProjectIdx ? null : idx);
+  };
 
   return (
     <MyProjectPage>
       <Header />
       <MyProfileWrapper>
         <MyProfileImg>프로필 사진</MyProfileImg>
-        <MyProfile>Personal Information</MyProfile>
+        <MyProfile>Contact To &rarr;</MyProfile>
       </MyProfileWrapper>
 
       <MyProjectWrapper>
         {projects.length > 0 ? (
           projects.map((project, idx) => {
             return (
-              <ProjectContainer key={idx}>
-                <ProjectList>{project.title}</ProjectList>
-                <MoveToDetail
-                  onClick={() =>
-                    navigate({
-                      /* /project/{projectId} */
-                    })
-                  }
-                >
-                  구경하러 가기 &rarr;
-                </MoveToDetail>
-              </ProjectContainer>
+              <MyProjectList key={idx}>
+                <ProjectContainer>
+                  <ProjectList onClick={() => handleShowSummary(idx)}>
+                    {project.title}
+                  </ProjectList>
+                  <MoveToDetail
+                    onClick={() => navigate(`/read/${project.projectId}`)}
+                  >
+                    구경하러 가기 &rarr;
+                  </MoveToDetail>
+                </ProjectContainer>
+                {selectedProjectIdx === idx && (
+                  <ProjectSummary
+                    style={{
+                      display: selectedProjectIdx === idx ? "block" : "none",
+                    }}
+                  >
+                    {project.description}
+                  </ProjectSummary>
+                )}
+              </MyProjectList>
             );
           })
         ) : (
@@ -76,30 +90,38 @@ const MyProjectPage = styled.div`
   justify-content: center;
   align-items: center;
   flex-direction: column;
+  margin-top: 100px;
 `;
 
 const MyProfileWrapper = styled.div`
   display: flex;
+  padding: 20px;
 `;
 
 const MyProfileImg = styled.div`
-  width: 200px;
-  height: 200px;
+  width: 220px;
+  height: 300px;
   overflow: hidden;
-  border-radius: 50%;
+  border-radius: 50px;
   background-color: #39bc56;
   display: flex;
   justify-content: center;
   align-items: center;
 `;
 
+// const MyInfo = styled.div`
+//   display: flex;
+// `;
+
 const MyProfile = styled.div`
   width: 500px;
+  height: 150px;
   margin-left: 20px;
-  background-color: #d6e1d9;
+  border: 1px solid #39bc56;
   text-align: left;
   padding: 20px;
   border-radius: 20px;
+  margin-top: auto;
 `;
 
 const MyProjectWrapper = styled.div`
@@ -110,11 +132,16 @@ const MyProjectWrapper = styled.div`
   margin-top: 50px;
 `;
 
+const MyProjectList = styled.div`
+  display: grid;
+`;
+
 const ProjectContainer = styled.div`
   display: flex;
   //align-items: center;
   //justify-content: space-between;
-  background-color: #e7f7e2;
+  //background-color: #e7f7e2;
+  border: 1px solid #39bc56;
   padding: 10px;
   padding-bottom: 10px;
   border-radius: 15px;
@@ -124,6 +151,13 @@ const ProjectContainer = styled.div`
 const ProjectList = styled.div`
   width: 600px;
   flex-grow: 1;
+`;
+
+const ProjectSummary = styled.div`
+  width: 700px;
+  margin-top: 10px;
+  background-color: green;
+  // flex-grow: 1;
 `;
 
 const MoveToDetail = styled.span`

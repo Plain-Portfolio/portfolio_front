@@ -13,6 +13,7 @@ import Post from "./pages/Post";
 import Detail from "./pages/Detail/Detail";
 import NotFound from "./components/Route/NotFound";
 import PrivateRoute from "./components/Route/PrivateRoute";
+import MyProject from "./pages/MyProjectList";
 
 const queryClient = new QueryClient();
 
@@ -31,6 +32,7 @@ function App() {
             <Route element={<PrivateRoute />}>
               <Route path="/edit/:id" element={<Post />} />
               <Route path="/post" element={<Post />} />
+              <Route path="/myproject" element={<MyProject />} />
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>

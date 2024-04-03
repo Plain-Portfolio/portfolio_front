@@ -22,7 +22,7 @@ interface Owner {
 }
 
 interface ProjectData {
-  // id: number;
+  projectId: number;
   title: string;
   description: string;
   githubLink: string;
