@@ -1,5 +1,10 @@
 // User Project List Data Interface
 
+interface ProjectCategory {
+  id: number;
+  name: string;
+}
+
 interface ProjectImage {
   id: number;
   src: string;
@@ -28,11 +33,18 @@ interface ProjectData {
   githubLink: string;
   isTeamProject: boolean;
   owner: Owner[];
-  projectCategories: [];
+  projectCategories: ProjectCategory[];
   projectImgs: ProjectImage[];
   comments: Comment[];
   likes: Like[];
   teamProjectMembers: { userId: number }[];
 }
 
-export type { ProjectImage, Comment, Like, Owner, ProjectData };
+export type {
+  ProjectCategory,
+  ProjectImage,
+  Comment,
+  Like,
+  Owner,
+  ProjectData,
+};

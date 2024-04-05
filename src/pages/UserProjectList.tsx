@@ -2,7 +2,7 @@ import styled from "styled-components";
 import Header from "../components/Header/Header";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { ProjectData } from "../interfaces/IProjectData";
 
 const fetchProjectData = async (userId: string) => {
@@ -10,7 +10,7 @@ const fetchProjectData = async (userId: string) => {
     const response = await axios.get<ProjectData[]>(
       `${process.env.REACT_APP_API_URL}/project/${userId}/projects`
     );
-    // console.log(response);
+    console.log(response);
     return response.data;
   } catch (error) {
     console.log("Error fetching projects: ", error);
@@ -18,15 +18,16 @@ const fetchProjectData = async (userId: string) => {
   }
 };
 
-function MyProject() {
+function UserProjectList() {
   const [projects, setProjects] = useState<ProjectData[]>([]);
   const [selectedProjectIdx, setSelectedProjectIdx] = useState<number | null>(
     null
   );
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
 
-  // memo지은: Home에서 userList.id 넘겨받아 해당 유저의 리스트 보여주도록 변경 필요
-  const userId = localStorage.getItem("user_id") as string;
+  // const params = useParams();
+  // const userId = params.userId;
+  const userId = "1"; // memo지은: 테스트용
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -54,15 +55,15 @@ function MyProject() {
   };
 
   return (
-    <MyProjectPage>
+    <UserProjectPage>
       <Header />
-      <MyProfileWrapper>
-        <MyProfileImg>프로필 사진</MyProfileImg>
-        <MyProfile>Contact To &rarr;</MyProfile>
-      </MyProfileWrapper>
+      <UserProfileWrapper>
+        <UserProfileImg>프로필 사진</UserProfileImg>
+        <UserProfile>Contact To &rarr;</UserProfile>
+      </UserProfileWrapper>
 
       <CategoryWrapper>
-        {dummyDatas
+        {dummyDatas //
           .flatMap((project) => project.projectCategories)
           .filter(
             (category, index, self) =>
@@ -79,9 +80,9 @@ function MyProject() {
           ))}
       </CategoryWrapper>
 
-      <MyProjectWrapper>
-        {dummyDatas.length > 0 ? (
-          dummyDatas
+      <UserProjectWrapper>
+        {dummyDatas.length > 0 ? ( //
+          dummyDatas //
             .filter((project) =>
               selectedCategories.length === 0
                 ? true
@@ -122,11 +123,14 @@ function MyProject() {
         ) : (
           <ProjectContainer>아직 프로젝트가 없습니다...</ProjectContainer>
         )}
-      </MyProjectWrapper>
-    </MyProjectPage>
+      </UserProjectWrapper>
+    </UserProjectPage>
   );
 }
 
+export default UserProjectList;
+
+// 테스트 위한 더미데이터
 const dummyDatas = [
   {
     projectId: 0,
@@ -184,51 +188,58 @@ const dummyDatas = [
   },
 ];
 
-const MyProjectPage = styled.div`
+const UserProjectPage = styled.div`
   height: auto;
   display: flex;
-  justify-content: center;
-  align-items: center;
   flex-direction: column;
   padding-top: 100px;
   padding-bottom: 100px;
 `;
 
-const MyProfileWrapper = styled.div`
+const UserProfileWrapper = styled.div`
   display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
   padding: 20px;
   margin-bottom: 50px;
 `;
 
-const MyProfileImg = styled.div`
-  width: 220px;
-  height: 220px;
-  overflow: hidden;
-  border-radius: 50%;
-  background-color: #39bc56;
+const UserProfileImg = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  //
+  width: 220px;
+  height: 220px;
+  //
+  overflow: hidden;
+  border-radius: 30%;
+  background-color: #39bc56;
 `;
 
-const MyProfile = styled.div`
-  width: 400px;
-  height: 150px;
-  margin-left: 50px;
+const UserProfile = styled.div`
+  width: 500px; // auto
+  height: 200px; // auto
+  margin-left: 20px;
   background-color: #d3d3d3;
   text-align: left;
   padding: 20px;
   border-radius: 20px;
-  margin-top: 45px;
+  margin-top: 10px;
 `;
 
 const CategoryWrapper = styled.div`
   display: flex;
-  margin-top: 30px;
-  margin-bottom: -30px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 20px;
 `;
 
 const CategoryButton = styled.div<{ active: number }>`
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
   padding: 10px;
   margin-right: 10px;
@@ -241,12 +252,14 @@ const CategoryButton = styled.div<{ active: number }>`
   }
 `;
 
-const MyProjectWrapper = styled.div`
+const UserProjectWrapper = styled.div`
   display: grid;
-  flex-direction: column;
-  padding: 10px;
+  //flex-direction: column;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 15px;
-  margin-top: 50px;
+  padding: 10px;
+  margin-top: 15px;
+  //width: 100%;
 `;
 
 const ProjectContainer = styled.div`
@@ -258,7 +271,7 @@ const ProjectContainer = styled.div`
 `;
 
 const ProjectTitle = styled.div`
-  width: 600px;
+  width: auto;
   flex-grow: 1;
   padding: 10px;
 `;
@@ -273,13 +286,12 @@ const MoveToDetail = styled.span`
 `;
 
 const ProjectSummaryContainer = styled.div`
-  width: 700px;
+  //width: 700px;
   padding: 10px;
   flex-grow: 1;
+  background-color: blue;
 `;
 
 const ProjectSummary = styled.div`
   margin: 10px;
 `;
-
-export default MyProject;
