@@ -1,20 +1,39 @@
 import { useNavigate } from "react-router-dom";
+import { useContext, useEffect, useState } from "react";
 import styled from "styled-components";
+import { AuthContext } from "../AuthContext";
 
 type Props = {};
 
 const Header = (props: Props) => {
   const navigate = useNavigate();
-  const onNavigate = () => {
-    navigate("/login");
+
+  const { isLoggedIn, userInfo, logout } = useContext(AuthContext);
+  const [localIsLoggedIn, setLocalIsLoggedIn] = useState(isLoggedIn);
+
+  useEffect(() => {
+    setLocalIsLoggedIn(isLoggedIn);
+  }, [isLoggedIn]);
+
+  const onNavigate = (url: string) => {
+    navigate(url);
   };
+
   return (
     <StyledHeader>
-      <Logowrapper>
+      <Logowrapper onClick={() => onNavigate("/")}>
         <LogoThin>TEAM</LogoThin>
         <Logo>PORTFOLIO</Logo>
       </Logowrapper>
-      <Login onClick={onNavigate}>Login</Login>
+      {localIsLoggedIn ? (
+        <>
+          {userInfo && <span>{userInfo.user.email}</span>}
+          <div onClick={() => onNavigate("/post")}>글쓰기</div>
+          <Login onClick={logout}>Logout</Login>
+        </>
+      ) : (
+        <Login onClick={() => onNavigate("/login")}>Login</Login>
+      )}
     </StyledHeader>
   );
 };
