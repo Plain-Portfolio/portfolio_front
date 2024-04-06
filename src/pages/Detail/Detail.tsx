@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { Button, Container } from "../../components/CommonTag";
 import { SectionCol, SectionRow } from "../../components/SectionDirection";
 import Carousel from "../../components/Detail/Carousel";
-import { Icomment, Ilike, Iproject } from "../../interfaces/IDetail";
+import { Ilike, Iproject, getComment } from "../../interfaces/IDetail";
 import { HiHeart } from "react-icons/hi";
 import { HiOutlineHeart } from "react-icons/hi";
 import { getToken } from "../../utils/token";
@@ -12,6 +12,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import styled from "styled-components";
 import axios from "axios";
 import Layout from "../../components/Layout/Layout";
+import Comment from "../../components/Detail/Comment";
 import DetailSkeleton from "../../components/Skeleton/DetailSkeleton";
 
 // memo지혜 : 좋아요, 좋아요 취소 API
@@ -47,8 +48,6 @@ const Detail = () => {
 
   // memo지혜 : 프로젝트 상태관리
   const [project, setProject] = useState<Iproject>();
-  // memo지혜 : 댓글 상태관리
-  const [comment, setComment] = useState<Icomment[]>([]);
   // memo지혜 : 좋아요 상태관리
   const [liked, setLiked] = useState<boolean>(false);
 
@@ -60,8 +59,7 @@ const Detail = () => {
 
   useEffect(() => {
     if (data) {
-      const { comments, likes, ...projectInfo } = data;
-
+      const { likes, ...projectInfo } = data;
       //memo지혜: 게시물에 사용자가 좋아요를 했는지 확인하는 함수
       const isLiked = likes.some(
         (like: Ilike) => like.userId === Number(userId)
@@ -71,7 +69,6 @@ const Detail = () => {
         setLiked(isLiked);
       }
 
-      setComment(comments);
       setProject({ ...projectInfo, likes });
     }
   }, [data]);
@@ -144,7 +141,7 @@ const Detail = () => {
                   </Li>
                 </Ul>
               </LikeInfo>
-              <Comment>댓글</Comment>
+              <Comment projectId={projectId} />
             </SectionLeft>
             <SectionRight>
               <ul>
@@ -152,13 +149,13 @@ const Detail = () => {
                   <Badge>{project?.isTeamProject ? "팀" : "개인"}</Badge>
                   {project?.isTeamProject &&
                     project.teamProjectMembers.map((member) => (
-                      <Badge>{member.userId}</Badge>
+                      <Badge key={member.userId}>{member.nickname}</Badge>
                     ))}
                 </Li>
                 <Li>
                   <label>카테고리</label>
                   {project?.projectCategories.map((category) => (
-                    <Badge>{category.name}</Badge>
+                    <Badge key={category.id}>{category.name}</Badge>
                   ))}
                 </Li>
                 <Li>
@@ -271,10 +268,4 @@ const Li = styled.li`
     flex-basis: 5rem;
     margin-right: 1rem;
   }
-`;
-
-const Comment = styled.div`
-  flex-grow: 6;
-  min-height: 20rem;
-  background-color: white;
 `;

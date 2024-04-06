@@ -10,10 +10,6 @@ const Carousel = ({ images }: Props) => {
   const slideRef = useRef<HTMLDivElement>(null);
   const [currentSlide, setCurrentSlide] = useState<number>(0);
 
-  // const images = [
-  //   { url: "/logo192.png", alt: "Image 1" },
-  //   { url: "/favicon.png", alt: "Image 2" },
-  // ];
   const sliding = (newSlideIndex: number) => {
     if (slideRef?.current) {
       slideRef.current.style.transition = "all 0.5s ease-in-out";
@@ -38,7 +34,7 @@ const Carousel = ({ images }: Props) => {
     <CarouselContainer>
       <CarouselTrack ref={slideRef}>
         {images.map((image: IprojectImgs, index) => (
-          <img key={index} src={image.src} alt={image.alt} />
+          <img key={index} src={image.imageSrc} alt={image.alt} />
         ))}
       </CarouselTrack>
       <CarouselPrev onClick={handlePrevClick}>
