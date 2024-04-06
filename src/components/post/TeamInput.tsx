@@ -12,11 +12,16 @@ import { IgetMember } from "../../interfaces/IDetail";
 
 type Props = {
   onChagneTeam: (isTeamProject: boolean, teamProjectMembers: Imember[]) => void;
-  defaultIsTeam: boolean;
-  defaultTeamMember: IgetMember[] | undefined;
+  defaultIsTeam: boolean | undefined;
+  defaultTeamMember: IgetMember[];
 };
 
-const TeamInput = ({ onChagneTeam, defaultIsTeam }: Props) => {
+const TeamInput = ({
+  onChagneTeam,
+  defaultIsTeam,
+  defaultTeamMember,
+}: Props) => {
+  //memo지혜: 팀프로젝트/ 개인 프로젝트
   const [teamProj, setTeamProj] = useState<boolean>(true);
   //memo지혜: 선택한 맴버배열 상태
   const [selectedMembers, setSelectedMembers] = useState<Imember[]>([]);
@@ -76,30 +81,46 @@ const TeamInput = ({ onChagneTeam, defaultIsTeam }: Props) => {
     featchData();
   }, []);
 
+  useEffect(() => {
+    if (defaultTeamMember.length > 0) {
+      const renameTeamMember = defaultTeamMember.map(
+        ({ userId, nickname }) => ({
+          id: userId,
+          nickname,
+        })
+      );
+      setSelectedMembers(renameTeamMember);
+    }
+  }, [defaultTeamMember, defaultIsTeam]);
+
   return (
     <>
       <Section>
         <Label>프로젝트 유형</Label>
         <SectionRow>
           <ButtonGroup>
-            <TeamButton
-              id="select1"
-              name="type"
-              type="radio"
-              value="true"
-              onClick={handleSelect}
-              defaultChecked={defaultIsTeam}
-            />
-            <label htmlFor="select1">팀</label>
-            <TeamButton
-              id="select2"
-              name="type"
-              type="radio"
-              value="false"
-              onClick={handleSelect}
-              defaultChecked={!defaultIsTeam}
-            />
-            <label htmlFor="select2">개인</label>
+            <>
+              <TeamButton
+                id="select1"
+                name="type"
+                type="radio"
+                value="true"
+                onClick={handleSelect}
+                defaultChecked={defaultIsTeam}
+              />
+              <label htmlFor="select1">팀</label>
+            </>
+            <>
+              <TeamButton
+                id="select2"
+                name="type"
+                type="radio"
+                value="false"
+                onClick={handleSelect}
+                defaultChecked={!defaultIsTeam}
+              />
+              <label htmlFor="select2">개인</label>
+            </>
           </ButtonGroup>
           <TeamMember>
             {members.length > 0 && (
@@ -148,6 +169,7 @@ const TeamButton = styled.input`
     border: 1px solid ${({ theme }) => theme.color.mainGreen};
     border-radius: 1.5rem;
   }
+
   &[type="radio"]:checked + label {
     background-color: ${({ theme }) => theme.color.mainGreen};
     color: white;

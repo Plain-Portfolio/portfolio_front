@@ -1,23 +1,15 @@
 import styled from "styled-components";
 import { IprojectImgs } from "../../interfaces/IPost";
-import { useEffect, useState } from "react";
 
 type Props = { files: IprojectImgs[] };
 
 const ImagePreview = ({ files }: Props) => {
-  const [previews, setPrviews] = useState<IprojectImgs[]>([]);
-  useEffect(() => {
-    if (files.length) {
-      setPrviews(previews);
-    }
-  }, [files]);
-
   return (
     <>
       <PreviewList>
-        {previews.map((preview) => (
-          <PreviewItme key={preview.id}>
-            <PreviewImg src={preview.src} alt={preview.alt} />
+        {files.map((file) => (
+          <PreviewItme key={file.id}>
+            <PreviewImg src={file.imageSrc} alt={file.alt} />
           </PreviewItme>
         ))}
       </PreviewList>
