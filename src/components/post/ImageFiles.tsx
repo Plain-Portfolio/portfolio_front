@@ -44,12 +44,13 @@ const renderFileNames = (validFiles: File[]) => {
 
 const uploadImages = async (files: File[]) => {
   console.log(files);
-  const imageData = new FormData();
+
   const promises = files.map(async (file) => {
+    const imageData = new FormData();
     imageData.append("images", file);
 
     const res = await axios.post(
-      `${process.env.REACT_APP_API_URL}/image/upload`,
+      `${process.env.REACT_APP_API_URL}/image/project/upload`,
       imageData,
       { headers: { "Content-Type": "multipart/form-data" } }
     );
@@ -76,7 +77,8 @@ const ImageFiles = ({ onFilesChange, defaultimages }: Props) => {
   const { mutate: uploadMutate } = useMutation({
     mutationFn: () => uploadImages(files),
     onSuccess: (data) => {
-      console.log("upload api");
+      console.log("upload api", data);
+
       // memo지혜: 업로드 성공시 리턴 값 상태에 할당 후, 이미지프리뷰에 사용
       const imageArr = data;
       setUploaded(imageArr);
