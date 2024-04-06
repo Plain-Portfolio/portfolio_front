@@ -48,6 +48,7 @@ const Post = () => {
   //          data는 기본 undefined로 data를 받아온 경우에서 setting됨
   useEffect(() => {
     data && setProject(data);
+    // console.log(data);
   }, [data]);
 
   // memo지혜: 이미지 변경에 따른 상태관리
@@ -169,9 +170,9 @@ const Post = () => {
                   isTeamProject: boolean,
                   teamProjectMembers: Imember[]
                 ) => handleTeamChange(isTeamProject, teamProjectMembers)}
-                defaultIsTeam={edit && project ? project?.isTeamProject : true}
+                defaultIsTeam={edit && project && project.isTeamProject}
                 defaultTeamMember={
-                  edit && project ? project.teamProjectMembers : undefined
+                  edit && project ? project.teamProjectMembers : []
                 }
               />
               <Section>
@@ -200,11 +201,10 @@ const Post = () => {
 };
 
 const PostContainer = styled(Container)`
-  margin: 14rem 0 16rem;
+  margin: 14rem 0;
 `;
 const PostForm = styled.form``;
 const PostContent = styled.div`
-  margin: 0 10%;
   border: 1px solid ${({ theme }) => theme.color.darkgray};
   min-height: 91.5rem;
   border-radius: 2.5rem;
