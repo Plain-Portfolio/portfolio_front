@@ -42,10 +42,14 @@ const useLogin = () => {
   const { mutate } = useMutation({
     mutationFn: loginMutation,
     onSuccess: (data) => {
-      // console.log(data);
+      console.log(data);
       login({
         token: data.token,
-        user: { userId: String(data.userId), email: data.email },
+        user: {
+          userId: String(data.userId),
+          email: data.email,
+          nickname: data.nickname,
+        },
       });
       navigate("/");
     },
@@ -70,6 +74,32 @@ function LoginContent() {
 
   const onSubmit = (data: User) => {
     mutate(data);
+  };
+
+  async function socialLoginRedirect(kindOf: string) {
+    const res = await axios.get(
+      `${process.env.REACT_APP_API_URL}/user/login/${kindOf}`
+    );
+    window.open(res.data.url, "_blank");
+  }
+
+  const getUserInfo = async (kindOf: string) => {
+    const res = await axios.get(
+      `${process.env.REACT_APP_API_URL}/user/login/${kindOf}/callback`
+    );
+
+    // login({
+    //   token: data.token,
+    //   user: {
+    //     userId: String(data.userId),
+    //     email: data.email,
+    //     nickname: data.nickname,
+    //   },
+    // });
+  };
+  const handleSocialLogin = async (kindOf: string) => {
+    await socialLoginRedirect(kindOf);
+    await getUserInfo(kindOf);
   };
 
   return (
@@ -100,8 +130,16 @@ function LoginContent() {
         <Horizontal />
         <LoginTitle $social>social login</LoginTitle>
         <SocialIcons>
-          <SocialIcon />
-          <SocialIcon />
+          <SocialIcon
+            onClick={() => handleSocialLogin("google")}
+            src="/google-icon.png"
+            alt="google"
+          />
+          <SocialIcon
+            onClick={() => handleSocialLogin("kakao")}
+            src="/kakao-icon.png"
+            alt="kakao"
+          />
         </SocialIcons>
       </SocialLogin>
     </LoginForm>
@@ -154,13 +192,13 @@ const SocialLogin = styled.div`
 const SocialIcons = styled.div`
   display: flex;
   justify-content: space-around;
+  backgroud
 `;
 
-const SocialIcon = styled.div`
+const SocialIcon = styled.img`
   width: 5.6rem;
   height: 5.6rem;
   border-radius: 3rem;
-  background: ${({ theme }) => theme.color.darkgray};
 `;
 
 const Horizontal = styled.hr`

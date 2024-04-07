@@ -19,7 +19,7 @@ type Props = { children: React.ReactNode };
 
 type UserInfo = {
   token: string;
-  user: { userId: string; email: string };
+  user: { userId: string; email: string; nickname: string };
 };
 
 const AuthProvider = ({ children }: Props) => {
@@ -34,6 +34,7 @@ const AuthProvider = ({ children }: Props) => {
     localStorage.setItem("token", token);
     localStorage.setItem("user_id", user.userId);
     localStorage.setItem("email", user.email);
+    localStorage.setItem("nickname", user.nickname);
     setIsLoggedIn(true);
     setUserInfo({ token, user });
   };
@@ -42,6 +43,7 @@ const AuthProvider = ({ children }: Props) => {
     localStorage.removeItem("token");
     localStorage.removeItem("user_id");
     localStorage.removeItem("email");
+    localStorage.removeItem("nickname");
     setIsLoggedIn(false);
     setUserInfo(undefined);
   };
