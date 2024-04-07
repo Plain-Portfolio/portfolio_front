@@ -52,6 +52,7 @@ const StyledHeader = styled.div`
   gap: 10px;
   color: white;
   justify-content: space-between;
+  z-index: 1;
 `;
 const Logowrapper = styled.div`
   display: flex;
