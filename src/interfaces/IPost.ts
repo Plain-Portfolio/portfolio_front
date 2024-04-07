@@ -28,7 +28,8 @@ interface Imember extends idNumber {
 // memo지혜: 수정모드 시, 필요한 projectimages 인터페이스
 interface IprojectImgs {
   id: number;
-  imageSrc: string;
+  imageSrc?: string;
+  src?: string;
   alt: string;
 }
 
