@@ -25,9 +25,8 @@ function UserProjectList() {
   );
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
 
-  // const params = useParams();
-  // const userId = params.userId;
-  const userId = "1"; // memo지은: 테스트용
+  const params = useParams();
+  const userId = params.userId;
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -62,8 +61,8 @@ function UserProjectList() {
         <UserProfile>Contact To &rarr;</UserProfile>
       </UserProfileWrapper>
 
-      <CategoryWrapper>
-        {dummyDatas //
+      <ProjectCategoryWrapper>
+        {projects //
           .flatMap((project) => project.projectCategories)
           .filter(
             (category, index, self) =>
@@ -78,11 +77,11 @@ function UserProjectList() {
               {category.name}
             </CategoryButton>
           ))}
-      </CategoryWrapper>
+      </ProjectCategoryWrapper>
 
-      <UserProjectWrapper>
-        {dummyDatas.length > 0 ? ( //
-          dummyDatas //
+      <ProjectListWrapper>
+        {projects.length > 0 ? ( //
+          projects //
             .filter((project) =>
               selectedCategories.length === 0
                 ? true
@@ -92,101 +91,57 @@ function UserProjectList() {
             )
             .map((project, idx) => {
               return (
-                <>
-                  <ProjectContainer key={idx}>
-                    <ProjectTitle onClick={() => handleShowSummary(idx)}>
-                      {project.title}
-                    </ProjectTitle>
-                    <MoveToDetail
-                      onClick={() => navigate(`/read/${project.projectId}`)}
-                    >
-                      구경하러 가기 &rarr;
-                    </MoveToDetail>
-                  </ProjectContainer>
-                  {selectedProjectIdx === idx && (
-                    <ProjectSummaryContainer
-                      style={{
-                        display: selectedProjectIdx === idx ? "block" : "none",
-                      }}
-                    >
-                      <ProjectSummary>{project.description}</ProjectSummary>
-                      {project.isTeamProject === true ? (
-                        <ProjectSummary>팀 프로젝트</ProjectSummary>
-                      ) : (
-                        <ProjectSummary>개인 프로젝트</ProjectSummary>
-                      )}
-                    </ProjectSummaryContainer>
-                  )}
-                </>
+                <ProjectContainer
+                  key={idx}
+                  onClick={() => handleShowSummary(idx)}
+                >
+                  <CardFront
+                    style={{
+                      transform:
+                        selectedProjectIdx === idx
+                          ? "rotateY(-180deg)"
+                          : "rotateY(0deg)",
+                    }}
+                  >
+                    <ProjectTitle>{project.title}</ProjectTitle>
+                    <ProjectImg src={project.projectImgs[0].src} />
+                  </CardFront>
+                  <CardBack
+                    style={{
+                      transform:
+                        selectedProjectIdx === idx
+                          ? "rotateY(0deg)"
+                          : "rotateY(180deg)",
+                    }}
+                  >
+                    {selectedProjectIdx === idx && (
+                      <ProjectSummaryContainer>
+                        <ProjectSummary>{project.description}</ProjectSummary>
+                        {project.isTeamProject === true ? (
+                          <ProjectSummary>팀 프로젝트</ProjectSummary>
+                        ) : (
+                          <ProjectSummary>개인 프로젝트</ProjectSummary>
+                        )}
+                        <MoveToDetail
+                          onClick={() => navigate(`/read/${project.projectId}`)}
+                        >
+                          자세히 보기 &rarr;
+                        </MoveToDetail>
+                      </ProjectSummaryContainer>
+                    )}
+                  </CardBack>
+                </ProjectContainer>
               );
             })
         ) : (
           <ProjectContainer>아직 프로젝트가 없습니다...</ProjectContainer>
         )}
-      </UserProjectWrapper>
+      </ProjectListWrapper>
     </UserProjectPage>
   );
 }
 
 export default UserProjectList;
-
-// 테스트 위한 더미데이터
-const dummyDatas = [
-  {
-    projectId: 0,
-    title: "프로젝트1",
-    description: "JavaScript, TypeScript, React",
-    img: 1, // memo지은: 이미지 아이디로 지급되면 이미지 가져와서 쓰면 됨
-    isTeamProject: true,
-    projectCategories: [
-      { name: "JavaScript", id: 0 },
-      { name: "TypeScript", id: 1 },
-      { name: "React", id: 2 },
-    ],
-  },
-  {
-    projectId: 1,
-    title: "프로젝트2",
-    description: "React, SpringBoot",
-    img: 2,
-    isTeamProject: true,
-    projectCategories: [
-      { name: "React", id: 2 },
-      { name: "SpringBoot", id: 4 },
-    ],
-  },
-  {
-    projectId: 2,
-    title: "프로젝트3",
-    description: "React, Java, SpringBoot",
-    img: 3,
-    isTeamProject: false,
-    projectCategories: [
-      { name: "React", id: 2 },
-      { name: "Java", id: 3 },
-      { name: "SpringBoot", id: 4 },
-    ],
-  },
-  {
-    projectId: 4,
-    title: "프로젝트4",
-    description: "Vanila JavaScript",
-    img: 4,
-    isTeamProject: false,
-    projectCategories: [{ name: "JavaScript", id: 0 }],
-  },
-  {
-    projectId: 5,
-    title: "프로젝트5",
-    description: "JavaScript, TypeScript",
-    img: 5,
-    isTeamProject: false,
-    projectCategories: [
-      { name: "JavaScript", id: 0 },
-      { name: "TypeScript", id: 1 },
-    ],
-  },
-];
 
 const UserProjectPage = styled.div`
   height: auto;
@@ -196,6 +151,7 @@ const UserProjectPage = styled.div`
   padding-bottom: 100px;
 `;
 
+// User Info
 const UserProfileWrapper = styled.div`
   display: flex;
   justify-content: center;
@@ -229,7 +185,8 @@ const UserProfile = styled.div`
   margin-top: 10px;
 `;
 
-const CategoryWrapper = styled.div`
+// Category
+const ProjectCategoryWrapper = styled.div`
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
@@ -248,50 +205,80 @@ const CategoryButton = styled.div<{ active: number }>`
   color: ${(props) => (props.active ? "#39bc56" : "#000")};
   font-weight: ${(props) => (props.active ? "bold" : "normal")};
   &:hover {
-    opacity: 0.8;
+    opacity: 0.7;
   }
 `;
 
-const UserProjectWrapper = styled.div`
+// Project List - CardFront + CardBack
+const ProjectListWrapper = styled.div`
   display: grid;
-  //flex-direction: column;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 15px;
   padding: 10px;
-  margin-top: 15px;
-  //width: 100%;
 `;
 
 const ProjectContainer = styled.div`
   display: flex;
+  align-items: center;
+  justify-content: center;
+  perspective: 1000px;
+`;
+
+// Card Front
+const CardFront = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 400px;
+  height: 300px;
   background-color: #d3d3d3;
   padding: 10px;
   border-radius: 15px;
+
+  backface-visibility: hidden;
+  transition: transform 0.5s ease;
+  transform-style: preserve-3d;
   cursor: pointer;
 `;
 
 const ProjectTitle = styled.div`
-  width: auto;
-  flex-grow: 1;
+  text-align: center;
   padding: 10px;
 `;
 
-const MoveToDetail = styled.span`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding-right: 10px;
-  font-weight: bold;
-  cursor: pointer;
+const ProjectImg = styled.img`
+  width: 100%;
+  height: 90%;
+  object-fit: contain;
+`;
+
+// Card Back
+const CardBack = styled.div`
+  backface-visibility: hidden;
+  transition: transform 0.5s ease;
+  transform-style: preserve-3d;
+  position: absolute;
 `;
 
 const ProjectSummaryContainer = styled.div`
-  //width: 700px;
+  display: flex;
+  flex-direction: column;
   padding: 10px;
-  flex-grow: 1;
-  background-color: blue;
+  width: 400px;
+  height: 300px;
+  background-color: #39bc56;
+  border-radius: 15px;
 `;
 
-const ProjectSummary = styled.div`
+const ProjectSummary = styled.span`
   margin: 10px;
+`;
+
+const MoveToDetail = styled.span`
+  padding: 10px;
+  margin-top: auto;
+  align-self: center;
+  font-weight: bold;
+  cursor: pointer;
 `;
