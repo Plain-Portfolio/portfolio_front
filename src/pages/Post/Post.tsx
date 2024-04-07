@@ -1,19 +1,24 @@
 import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Section, SectionRow } from "../components/SectionDirection";
-import { Container, FillButton, Input, Label } from "../components/CommonTag";
-import ImageFiles from "../components/Post/ImageFiles";
-import CategoryInput from "../components/Post/CategoryInput";
-import TeamInput from "../components/Post/TeamInput";
-import Layout from "../components/Layout/Layout";
+import { Section, SectionRow } from "../../components/SectionDirection";
+import {
+  Container,
+  FillButton,
+  Input,
+  Label,
+} from "../../components/CommonTag";
+import ImageFiles from "../../components/Post/ImageFiles";
+import CategoryInput from "../../components/Post/CategoryInput";
+import TeamInput from "../../components/Post/TeamInput";
+import Layout from "../../components/Layout/Layout";
 import {
   Icategory,
   IdNumberArr,
   Imember,
   PostFormData,
-} from "../interfaces/IPost";
-import { Iproject } from "../interfaces/IDetail";
-import { useProjectData } from "../hooks/projecthooks";
+} from "../../interfaces/IPost";
+import { Iproject } from "../../interfaces/IDetail";
+import { useProjectData } from "../../hooks/projecthooks";
 import styled from "styled-components";
 
 const Post = () => {

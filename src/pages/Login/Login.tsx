@@ -1,6 +1,6 @@
 import styled from "styled-components";
-import LoginContent from "../components/Login/LoginContent";
-import Layout from "../components/Layout/Layout";
+import LoginContent from "../../components/Login/LoginContent";
+import Layout from "../../components/Layout/Layout";
 
 export default function Login() {
   return (
