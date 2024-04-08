@@ -89,8 +89,6 @@ const ProfileContent = styled.div`
   flex-direction: column;
   gap: 1.2rem;
   align-items: center;
-  gap: 1.2rem;
-  align-items: center;
 `;
 
 const ProfileImg = styled.div`
@@ -127,18 +125,7 @@ const ImgContent = styled.div`
   height: 100%;
   overflow: hidden;
 `;
-const Imgwrapper = styled.div`
-  width: fit-content;
-  height: 100%;
-  display: flex;
-  gap: 2rem;
-`;
+
 const AllPortpolio = styled.div`
   font-size: 1.6rem;
-`;
-
-const Name = styled.div`
-  font-size: 1.6rem;
-  font-weight: 700;
-  padding-bottom: 0.4rem;
 `;
