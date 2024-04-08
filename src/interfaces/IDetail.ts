@@ -33,15 +33,15 @@ interface Ilike {
 // memo지혜: 댓글 인터페이스
 interface Icomment {
   context: string;
-  projectId: number;
+  projectId?: number;
   parentCommentOrderId: number | null;
   commentOrder: number;
   childCommentCount: number;
-  isDeleted: boolean;
+  isDeleted?: boolean;
 }
 interface getComment extends Icomment {
   id: number;
-  owner: IOwner;
+  userDto: { userId: number; nickname: string };
   project: {
     id: number;
   };

@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { getToken } from "../utils/token";
-import { PostFormData } from "../interfaces/IPost";
+import { PostFormData, UpdateFormData } from "../interfaces/IPost";
 import { useNavigate } from "react-router-dom";
 
 const fetchProject = async (projectId: string) => {
@@ -13,7 +13,13 @@ const fetchProject = async (projectId: string) => {
 
 const deleteProject = async (projectId: string) => {
   const res = await axios.delete(
-    `${process.env.REACT_APP_API_URL}/project/${projectId}`
+    `${process.env.REACT_APP_API_URL}/project/${projectId}`,
+    {
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
+      },
+    }
   );
   return res.data;
 };
@@ -32,7 +38,7 @@ const createProject = async (postData: PostFormData) => {
   return res.data;
 };
 
-const updateProject = async (postData: PostFormData) => {
+const updateProject = async (postData: UpdateFormData) => {
   const res = await axios.put(
     `${process.env.REACT_APP_API_URL}/project/update`,
     postData,
@@ -78,7 +84,7 @@ export const useProjectData = (projectId: string | undefined) => {
   const { mutate: updateMutate } = useMutation({
     mutationFn: updateProject,
     onSuccess: (data) => {
-      navigate(`/read/${data.id}`);
+      navigate(`/read/${data.projectId}`);
     },
     onError: (error) => {
       console.error("Error deleting project:", error);

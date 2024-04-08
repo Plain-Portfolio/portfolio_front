@@ -1,6 +1,6 @@
 import { Route, Routes } from "react-router-dom";
 import Join from "./pages/Join/Join";
-import Login from "./pages/Login";
+import Login from "./pages/Login/Login";
 import Home from "./pages/Home/Home";
 import { BrowserRouter } from "react-router-dom";
 import { ThemeProvider } from "styled-components";
@@ -9,7 +9,7 @@ import GlobalStyles from "./styles/GlobalStyels";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import CustomToast from "./components/CustomToast";
 import "react-toastify/dist/ReactToastify.min.css";
-import Post from "./pages/Post";
+import Post from "./pages/Post/Post";
 import Detail from "./pages/Detail/Detail";
 import NotFound from "./components/Route/NotFound";
 import PrivateRoute from "./components/Route/PrivateRoute";

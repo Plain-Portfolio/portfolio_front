@@ -30,6 +30,35 @@ const createComment = async (data: Icomment) => {
   return res.data;
 };
 
+const deleteComment = async (id: number) => {
+  const res = await axios.delete(
+    `${process.env.REACT_APP_API_URL}/comment/delete`,
+    {
+      data: { commentId: id },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `${getToken()}`,
+      },
+    }
+  );
+
+  return res.data;
+};
+
+const updateComment = async (data: Icomment) => {
+  const res = await axios.put(
+    `${process.env.REACT_APP_API_URL}/comment/update`,
+    data,
+    {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `${getToken()}`,
+      },
+    }
+  );
+  return res.data;
+};
+
 export const useCommentData = (projectId: string | undefined) => {
   const queryClient = useQueryClient();
 
@@ -51,11 +80,36 @@ export const useCommentData = (projectId: string | undefined) => {
     },
   });
 
+  const { mutate: updateCommentMutate } = useMutation({
+    mutationFn: updateComment,
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({
+        queryKey: ["fetchComment", projectId as string],
+      });
+    },
+    onError: (error) => {
+      console.error("Error comment craete", error);
+    },
+  });
+
+  const { mutate: delteCommentMutate } = useMutation({
+    mutationFn: deleteComment,
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({
+        queryKey: ["fetchComment", projectId as string],
+      });
+    },
+    onError: (error) => {
+      console.error("Error comment craete", error);
+    },
+  });
   return {
     isLoading,
     data,
     isError,
     error,
     createCommentMutate,
+    delteCommentMutate,
+    updateCommentMutate,
   };
 };
