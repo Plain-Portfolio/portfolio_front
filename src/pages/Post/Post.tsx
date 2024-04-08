@@ -7,9 +7,9 @@ import {
   Input,
   Label,
 } from "../../components/CommonTag";
-import ImageFiles from "../../components/Post/ImageFiles";
-import CategoryInput from "../../components/Post/CategoryInput";
-import TeamInput from "../../components/Post/TeamInput";
+import ImageFiles from "../../components/PostSection/ImageFiles";
+import CategoryInput from "../../components/PostSection/CategoryInput";
+import TeamInput from "../../components/PostSection/TeamInput";
 import Layout from "../../components/Layout/Layout";
 import {
   Icategory,
