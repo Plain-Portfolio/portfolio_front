@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import styled from "styled-components";
 import axios from "axios";
+import Layout from "../../components/Layout/Layout";
 
 type Props = {};
 
@@ -30,31 +31,35 @@ const Home = (props: Props) => {
   }, []);
 
   return (
-    <HomePage>
-      <ProfileWrapper>
-        {userList.map((item, idx) => {
-          return (
-            <ProfileContent key={idx}>
-              {item.userImgs.length > 0 ? (
-                <ProfileImg
-                  style={{ backgroundImage: `url(${item.userImgs[0].imgSrc})` }}
-                />
-              ) : (
-                <ProfileImg
-                  style={{
-                    backgroundImage: `url("./assets/join/profile.png")`,
-                  }}
-                />
-              )}
+    <Layout>
+      <HomePage>
+        <ProfileWrapper>
+          {userList.map((item, idx) => {
+            return (
+              <ProfileContent key={idx}>
+                {item.userImgs && item.userImgs.length > 0 ? (
+                  <ProfileImg
+                    style={{
+                      backgroundImage: `url(${item.userImgs[0].imgSrc})`,
+                    }}
+                  />
+                ) : (
+                  <ProfileImg
+                    style={{
+                      backgroundImage: `url("./assets/join/profile.png")`,
+                    }}
+                  />
+                )}
 
-              <Nickname>{item.nickname}</Nickname>
-              <Introduction>{item.introduction}</Introduction>
-              <AllPortpolio>전체 포트폴리오 보기</AllPortpolio>
-            </ProfileContent>
-          );
-        })}
-      </ProfileWrapper>
-    </HomePage>
+                <Nickname>{item.nickname}</Nickname>
+                <Introduction>{item.introduction}</Introduction>
+                <AllPortpolio>전체 포트폴리오 보기</AllPortpolio>
+              </ProfileContent>
+            );
+          })}
+        </ProfileWrapper>
+      </HomePage>
+    </Layout>
   );
 };
 
