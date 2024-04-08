@@ -16,6 +16,7 @@ import {
   IdNumberArr,
   Imember,
   PostFormData,
+  UpdateFormData,
 } from "../../interfaces/IPost";
 import { Iproject } from "../../interfaces/IDetail";
 import { useProjectData } from "../../hooks/projecthooks";
@@ -53,7 +54,7 @@ const Post = () => {
   //          data는 기본 undefined로 data를 받아온 경우에서 setting됨
   useEffect(() => {
     data && setProject(data);
-    // console.log(data);
+    console.log(data);
   }, [data]);
 
   // memo지혜: 이미지 변경에 따른 상태관리
@@ -97,6 +98,18 @@ const Post = () => {
     const githubLink = githubLinkRef.current?.value;
 
     const { isTeamProject, projectCategories, teamProjectMembers } = formData;
+    // memo지혜: 생성 or 수정 폼
+    let postData = {
+      title,
+      description,
+      githubLink,
+      isTeamProject,
+      ownerId: Number(userId),
+      projectCategories,
+      teamProjectMembers,
+      projectImgs: imageFiles,
+    } as PostFormData & UpdateFormData;
+    console.log(postData);
 
     // memo지혜: validation
     if (
@@ -111,24 +124,12 @@ const Post = () => {
       return;
     }
 
-    // memo지혜: 생성 or 수정 폼
-    const postData = {
-      title,
-      description,
-      githubLink,
-      isTeamProject,
-      ownerId: Number(userId),
-      projectCategories,
-      teamProjectMembers,
-      projectImgs: imageFiles,
-    } as PostFormData;
-    console.log(postData);
-
     // memo지혜: 생성 or 수정 폼 api호출
     if (!edit) {
-      createMutate(postData);
+      createMutate(postData as PostFormData);
     } else {
-      updateMutate(postData);
+      postData["projectId"] = Number(projectId);
+      updateMutate(postData as UpdateFormData);
     }
   };
 
@@ -175,7 +176,9 @@ const Post = () => {
                   isTeamProject: boolean,
                   teamProjectMembers: Imember[]
                 ) => handleTeamChange(isTeamProject, teamProjectMembers)}
-                defaultIsTeam={edit && project && project.isTeamProject}
+                defaultIsTeam={
+                  edit && project ? project.isTeamProject : undefined
+                }
                 defaultTeamMember={
                   edit && project ? project.teamProjectMembers : []
                 }
@@ -253,8 +256,7 @@ const PostDescription = styled.textarea`
   outline: none;
 `;
 const PostButton = styled(FillButton)`
-  width: 80%;
-  margin: 0 10%;
+  width: 100%;
   border-radius: 2.5rem;
   font-size: 2.5rem;
   padding: 2rem;
