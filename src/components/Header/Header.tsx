@@ -4,9 +4,9 @@ import styled from "styled-components";
 import { AuthContext, UserInfo } from "../AuthContext";
 import { showToast } from "../../styles/Toast";
 
-type Props = {};
+type Props = { type: string };
 
-const Header = (props: Props) => {
+const Header = ({ type }: Props) => {
   const navigate = useNavigate();
 
   const { isLoggedIn, userInfo, logout } = useContext(AuthContext);
@@ -49,21 +49,21 @@ export default Header;
 
 const StyledHeader = styled.header`
   width: 100%;
-  height: 66px;
+  height: 6.6rem;
   background-color: #39bc56;
   position: fixed;
   top: 0;
   left: 0;
   padding: 1.7rem 4rem;
   display: flex;
-  gap: 10px;
+  gap: 1rem;
   color: white;
   justify-content: space-between;
   z-index: 1;
 `;
 const Logowrapper = styled.div`
   display: flex;
-  gap: 10px;
+  gap: 1rem;
   align-items: center;
 `;
 const LogoThin = styled.div`

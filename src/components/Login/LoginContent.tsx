@@ -55,6 +55,7 @@ const getErrorMessage = (code: number) => {
 };
 
 const useLogin = () => {
+  const { login } = useContext(AuthContext);
   const navigate = useNavigate();
   const { login } = useContext(AuthContext);
 
@@ -223,6 +224,7 @@ const Horizontal = styled.hr`
   border: 0;
   margin-top: 3.2rem;
   margin-bottom: 3.9rem;
+  background: ${({ theme }) => theme.color.darkgray};
   background: ${({ theme }) => theme.color.darkgray};
 `;
 

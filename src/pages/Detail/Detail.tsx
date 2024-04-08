@@ -68,7 +68,7 @@ const Detail = () => {
       if (isLiked) {
         setLiked(isLiked);
       }
-      console.log("read", data);
+
       setProject({ ...projectInfo, likes });
     }
   }, [data]);
