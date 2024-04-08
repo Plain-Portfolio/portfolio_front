@@ -109,5 +109,4 @@ const Login = styled.div`
   background-color: white;
   color: #39bc56;
   border-radius: 5rem;
-  cursor: pointer;
 `;
