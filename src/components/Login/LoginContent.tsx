@@ -8,6 +8,8 @@ import { SectionCol } from "../SectionDirection";
 import { LoginResponse, User } from "../../interfaces/IUser";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { useContext } from "react";
+import { AuthContext } from "../AuthContext";
 
 interface LoginTitleProps {
   $social?: boolean;
@@ -34,13 +36,17 @@ const loginMutation = async (data: User) => {
 };
 
 const useLogin = () => {
+  const { login } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const { mutate } = useMutation({
     mutationFn: loginMutation,
     onSuccess: (data) => {
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("user_id", String(data.user.id));
+      // console.log(data);
+      login({
+        token: data.token,
+        user: { userId: String(data.userId), email: data.email },
+      });
       navigate("/");
     },
     onError: (error) => {
@@ -113,7 +119,7 @@ const ValidationError = styled.p`
 const LoginForm = styled.form`
   width: 52.3em;
   height: 55.2rem;
-  border: 1px solid ${({ theme }) => theme.lightgray};
+  border: 1px solid ${({ theme }) => theme.color.lightgray};
   border-radius: 2rem;
   box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
 `;
@@ -154,7 +160,7 @@ const SocialIcon = styled.div`
   width: 5.6rem;
   height: 5.6rem;
   border-radius: 3rem;
-  background: ${({ theme }) => theme.darkgray};
+  background: ${({ theme }) => theme.color.darkgray};
 `;
 
 const Horizontal = styled.hr`
@@ -163,7 +169,7 @@ const Horizontal = styled.hr`
   border: 0;
   margin-top: 3.2rem;
   margin-bottom: 3.9rem;
-  background: ${({ theme }) => theme.darkgray};
+  background: ${({ theme }) => theme.color.darkgray};
 `;
 
 const Label = styled.label`
@@ -177,14 +183,14 @@ const LoginButton = styled.button`
   height: 4.8rem;
   border-radius: 1rem;
   margin-top: 2.5rem;
-  background-color: ${({ theme }) => theme.mainGreen};
+  background-color: ${({ theme }) => theme.color.mainGreen};
   color: #fff;
   font-weight: bold;
   font-size: 2rem;
   border: none;
 
   &:hover {
-    background-color: ${({ theme }) => theme.darkGreen};
+    background-color: ${({ theme }) => theme.color.darkGreen};
     transition: background 0.2s ease-in-out;
   }
 `;
