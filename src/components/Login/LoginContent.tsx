@@ -69,17 +69,6 @@ const useLogin = () => {
     });
   };
 
-  const handleLoginSuccess = (data: LoginResponse) => {
-    login({
-      token: data.token,
-      user: {
-        userId: String(data.userId),
-        email: data.email,
-        nickname: data.nickname,
-      },
-    });
-  };
-
   const { mutate } = useMutation({
     mutationFn: loginMutation,
     onSuccess: (data: LoginResponse) => {
