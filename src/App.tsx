@@ -31,7 +31,7 @@ function App() {
               <Route path="/join" element={<Join />} />
               <Route path="/login" element={<Login />} />
               <Route path="/read/:id" element={<Detail />} />
-              <Route path="/:userId/project" element={<UserProjectList />} />
+              <Route path="/:userId/projects" element={<UserProjectList />} />
               <Route element={<PrivateRoute />}>
                 <Route path="/edit/:id" element={<Post />} />
                 <Route path="/post" element={<Post />} />

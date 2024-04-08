@@ -16,19 +16,28 @@ function UserProjectList() {
   const { userId } = useParams();
   const navigate = useNavigate();
 
+  // memo지은: useLocation으로 Home에서 Intro 받아오는 방식으로 변경 예정
   useEffect(() => {
     const fetchProjectData = async (userId: string) => {
-      try {
-        const response = await axios.get<ProjectData[]>(
+      await axios
+        .get<ProjectData[]>(
           `${process.env.REACT_APP_API_URL}/project/${userId}/projects`
-        );
-        setProjects(response.data);
-        setUserIntro(
-          response.data[0]?.owner?.introduction ?? "소개글이 없습니다"
-        );
-      } catch (error) {
-        console.log("Error: ", error);
-      }
+        )
+        .then((response) => {
+          setProjects(response.data);
+          setUserIntro(
+            response.data[0]?.owner?.introduction ?? "소개글이 없습니다"
+          );
+        })
+        .catch((error) => {
+          if (error.response.data.status === 1029) {
+            console.log(
+              "400 error :: 해당 유저의 프로젝트가 존재하지 않습니다"
+            );
+            setProjects([]);
+            setUserIntro("소개글을 가져올 수 없습니다");
+          }
+        });
     };
     if (userId) {
       fetchProjectData(userId);
@@ -51,7 +60,7 @@ function UserProjectList() {
 
   return (
     <UserProjectPage>
-      <Header />
+      <Header type="List" />
       <UserProfileWrapper>
         <UserProfileImg>프로필 사진</UserProfileImg>
         <UserProfile>{userIntro}</UserProfile>
