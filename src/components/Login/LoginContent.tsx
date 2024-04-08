@@ -57,6 +57,18 @@ const getErrorMessage = (code: number) => {
 const useLogin = () => {
   const { login } = useContext(AuthContext);
   const navigate = useNavigate();
+  const { login } = useContext(AuthContext);
+
+  const handleLoginSuccess = (data: LoginResponse) => {
+    login({
+      token: data.token,
+      user: {
+        userId: String(data.userId),
+        email: data.email,
+        nickname: data.nickname,
+      },
+    });
+  };
 
   const handleLoginSuccess = (data: LoginResponse) => {
     login({
