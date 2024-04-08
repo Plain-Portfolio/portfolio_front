@@ -56,6 +56,8 @@ const CarouselContainer = styled.div`
 
   overflow: hidden;
   position: relative;
+  border-radius: 2rem;
+  border: 0.2rem solid ${({ theme }) => theme.color.darkgray};
 `;
 const CarouselTrack = styled.div`
   display: flex;
