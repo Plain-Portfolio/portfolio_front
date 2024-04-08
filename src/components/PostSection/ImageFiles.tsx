@@ -149,6 +149,10 @@ const ImageFiles = ({ onFilesChange, defaultimages }: Props) => {
   useEffect(() => {
     if (defaultimages) {
       setUploaded(defaultimages);
+      const idArray = defaultimages.map((image) => {
+        return { id: image.id };
+      });
+      setFilesIds(idArray);
     }
   }, [defaultimages]);
 
@@ -209,7 +213,10 @@ const ImagePreviewBoard = styled.div`
   margin-top: 2rem;
   background-color: ${({ theme }) => theme.color.lightgray};
   padding: 1.3rem 1rem;
+  position: relative;
+
   & > label {
+    position: absolute;
     font-weight: 900;
   }
   & > p {

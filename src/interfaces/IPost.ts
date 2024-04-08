@@ -9,6 +9,10 @@ interface PostFormData {
   projectImgs?: IdNumberArr;
   teamProjectMembers: { userId: number }[];
 }
+
+interface UpdateFormData extends PostFormData {
+  projectId: number;
+}
 interface idNumber {
   id: number;
 }
@@ -28,8 +32,9 @@ interface Imember extends idNumber {
 // memo지혜: 수정모드 시, 필요한 projectimages 인터페이스
 interface IprojectImgs {
   id: number;
-  imageSrc: string;
-  alt: string;
+  imageSrc?: string;
+  src?: string;
+  alt?: string;
 }
 
 export type {
@@ -39,4 +44,5 @@ export type {
   idNumber,
   IdNumberArr,
   IprojectImgs,
+  UpdateFormData,
 };
