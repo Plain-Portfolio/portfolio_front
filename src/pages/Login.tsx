@@ -22,6 +22,7 @@ const LoginContainer = styled.div`
   align-items: center;
   margin-top: 6rem;
   min-height: 100vh;
+  padding: 14rem 0 7.4rem 0;
 `;
 
 const LinkToJoin = styled.p`
