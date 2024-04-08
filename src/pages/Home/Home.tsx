@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
 import styled from "styled-components";
-import Header from "../../components/Header/Header";
 import axios from "axios";
 
 type Props = {};
@@ -32,7 +31,6 @@ const Home = (props: Props) => {
 
   return (
     <HomePage>
-      <Header type="Logout" />
       <ProfileWrapper>
         {userList.map((item, idx) => {
           return (
@@ -102,6 +100,19 @@ const Introduction = styled.div`
   text-align: center;
   padding: 0.5rem;
   box-sizing: border-box;
+  position: relative;
+  overflow: hidden;
+`;
+const ImgContent = styled.div`
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+`;
+const Imgwrapper = styled.div`
+  width: fit-content;
+  height: 100%;
+  display: flex;
+  gap: 2rem;
 `;
 const AllPortpolio = styled.div`
   font-size: 1.6rem;

@@ -1,41 +1,15 @@
-import React, { useEffect, useState } from "react";
 import styled from "styled-components";
+import { IprojectImgs } from "../../interfaces/IPost";
 
-type PreviewImage = {
-  src: string | null;
-  name: string;
-};
-
-type Props = { files: File[] };
+type Props = { files: IprojectImgs[] };
 
 const ImagePreview = ({ files }: Props) => {
-  const [previewImages, setPreviewImages] = useState<PreviewImage[]>([]);
-
-  useEffect(() => {
-    const updatePreviews = async () => {
-      const newPreviews = await Promise.all(
-        files.map(async (file) => {
-          const reader = new FileReader();
-          const promise = new Promise((resolve) => {
-            reader.onload = () =>
-              resolve({ src: reader.result, name: file.name });
-          });
-          reader.readAsDataURL(file);
-          return promise;
-        })
-      );
-      setPreviewImages(newPreviews as PreviewImage[]);
-    };
-
-    updatePreviews();
-  }, [files]);
-
   return (
     <>
       <PreviewList>
-        {previewImages.map((image) => (
-          <PreviewItme key={image.name}>
-            {image.src && <PreviewImg src={image.src} alt={image.name} />}
+        {files.map((file) => (
+          <PreviewItme key={file.id}>
+            <PreviewImg src={file.imageSrc} alt={file.alt} />
           </PreviewItme>
         ))}
       </PreviewList>
