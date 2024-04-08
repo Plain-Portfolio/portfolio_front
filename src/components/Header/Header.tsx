@@ -4,9 +4,9 @@ import styled from "styled-components";
 import { AuthContext, UserInfo } from "../AuthContext";
 import { showToast } from "../../styles/Toast";
 
-type Props = { type: string };
+type Props = {};
 
-const Header = ({ type }: Props) => {
+const Header = (props: Props) => {
   const navigate = useNavigate();
 
   const { isLoggedIn, userInfo, logout } = useContext(AuthContext);

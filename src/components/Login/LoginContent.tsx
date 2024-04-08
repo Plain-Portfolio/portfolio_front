@@ -57,7 +57,6 @@ const getErrorMessage = (code: number) => {
 const useLogin = () => {
   const { login } = useContext(AuthContext);
   const navigate = useNavigate();
-  const { login } = useContext(AuthContext);
 
   const handleLoginSuccess = (data: LoginResponse) => {
     login({

@@ -1,10 +1,10 @@
 import React, { useCallback, useState } from "react";
 import styled from "styled-components";
-import Header from "../../components/Header/Header";
 import JoinInputSection from "../../components/JoinInputSection/JoinInputSection";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { showToast } from "../../styles/Toast";
+import Layout from "../../components/Layout/Layout";
 
 type UserInfo = {
   [key: string]: string;
@@ -145,33 +145,34 @@ const Join = () => {
     }
   }, [userInfo, CheckAll, userImgId]);
   return (
-    <JoinPage>
-      <Header type="Login" />
-      <Wrapper>
-        <Container>
-          <Title>Signup</Title>
-          {joinLayout.map(
-            ({ subtitle, placeholder, textType, errorMsg }, idx) => {
-              return (
-                <JoinInputSection
-                  onChange={onChange}
-                  value={userInfo[subtitle]}
-                  type={subtitle}
-                  textType={textType}
-                  placeholder={placeholder}
-                  key={idx}
-                  errorMsg={errorMsg}
-                  isError={CheckValid(subtitle, userInfo[subtitle])}
-                />
-              );
-            }
-          )}
-          <JoinButton onClick={onJoin} disabled={CheckAll()}>
-            회원가입하기
-          </JoinButton>
-        </Container>
-      </Wrapper>
-    </JoinPage>
+    <Layout>
+      <JoinPage>
+        <Wrapper>
+          <Container>
+            <Title>Signup</Title>
+            {joinLayout.map(
+              ({ subtitle, placeholder, textType, errorMsg }, idx) => {
+                return (
+                  <JoinInputSection
+                    onChange={onChange}
+                    value={userInfo[subtitle]}
+                    type={subtitle}
+                    textType={textType}
+                    placeholder={placeholder}
+                    key={idx}
+                    errorMsg={errorMsg}
+                    isError={CheckValid(subtitle, userInfo[subtitle])}
+                  />
+                );
+              }
+            )}
+            <JoinButton onClick={onJoin} disabled={CheckAll()}>
+              회원가입하기
+            </JoinButton>
+          </Container>
+        </Wrapper>
+      </JoinPage>
+    </Layout>
   );
 };
 
