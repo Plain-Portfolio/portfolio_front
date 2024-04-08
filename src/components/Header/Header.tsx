@@ -1,7 +1,8 @@
 import { useNavigate } from "react-router-dom";
 import { useContext, useEffect, useState } from "react";
 import styled from "styled-components";
-import { AuthContext } from "../AuthContext";
+import { AuthContext, UserInfo } from "../AuthContext";
+import { showToast } from "../../styles/Toast";
 
 type Props = {};
 
@@ -10,14 +11,20 @@ const Header = (props: Props) => {
 
   const { isLoggedIn, userInfo, logout } = useContext(AuthContext);
   const [localIsLoggedIn, setLocalIsLoggedIn] = useState(isLoggedIn);
-
-  useEffect(() => {
-    setLocalIsLoggedIn(isLoggedIn);
-  }, [isLoggedIn]);
-
+  const [localUser, setLocalUser] = useState<UserInfo>();
   const onNavigate = (url: string) => {
     navigate(url);
   };
+
+  const handleLogout = () => {
+    logout();
+    showToast({ type: "success", message: "로그아웃 성공하였습니다." });
+  };
+
+  useEffect(() => {
+    setLocalUser(userInfo);
+    setLocalIsLoggedIn(isLoggedIn);
+  }, [isLoggedIn, userInfo]);
 
   return (
     <StyledHeader>
@@ -26,11 +33,11 @@ const Header = (props: Props) => {
         <Logo>PORTFOLIO</Logo>
       </Logowrapper>
       {localIsLoggedIn ? (
-        <>
-          {userInfo && <span>{userInfo.user.email}</span>}
-          <div onClick={() => onNavigate("/post")}>글쓰기</div>
-          <Login onClick={logout}>Logout</Login>
-        </>
+        <Logowrapper>
+          {localUser && <UserEmail>{localUser.user.email}</UserEmail>}
+          <PostLink onClick={() => onNavigate("/post")}>글쓰기</PostLink>
+          <Login onClick={handleLogout}>Logout</Login>
+        </Logowrapper>
       ) : (
         <Login onClick={() => onNavigate("/login")}>Login</Login>
       )}
@@ -40,7 +47,7 @@ const Header = (props: Props) => {
 
 export default Header;
 
-const StyledHeader = styled.div`
+const StyledHeader = styled.header`
   width: 100%;
   height: 66px;
   background-color: #39bc56;
@@ -80,4 +87,12 @@ const Login = styled.div`
   color: #39bc56;
   border-radius: 5rem;
   cursor: pointer;
+`;
+const PostLink = styled(Login)`
+  border: 0.2rem solid white;
+  color: white;
+  background-color: ${({ theme }) => theme.color.mainGreen};
+`;
+const UserEmail = styled.span`
+  font-size: 1.3rem;
 `;

@@ -17,17 +17,25 @@ const AuthContext = createContext({
 
 type Props = { children: React.ReactNode };
 
-type UserInfo = {
+export type UserInfo = {
   token: string;
   user: { userId: string; email: string; nickname: string };
 };
 
 const AuthProvider = ({ children }: Props) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [userInfo, setUserInfo] = useState<UserInfo | undefined>(undefined);
+  const [userInfo, setUserInfo] = useState<UserInfo>();
 
   useEffect(() => {
     setIsLoggedIn(!!getToken());
+    setUserInfo({
+      token: getToken() as string,
+      user: {
+        email: localStorage.getItem("email") as string,
+        userId: localStorage.getItem("user_id") as string,
+        nickname: localStorage.getItem("nickname") as string,
+      },
+    });
   }, []);
 
   const login = ({ token, user }: UserInfo) => {
