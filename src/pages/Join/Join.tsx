@@ -8,10 +8,12 @@ import { showToast } from "../../styles/Toast";
 
 type UserInfo = {
   [key: string]: string;
+  profilePicture: string;
   nickname: string;
   email: string;
   password: string;
   pwConfirm: string;
+  selfIntroduction: string;
 };
 const emailRegExp =
   /^[A-Za-z0-9_]+[A-Za-z0-9]*[@]{1}[A-Za-z0-9]+[A-Za-z0-9]*[.]{1}[A-Za-z]{1,3}$/;
@@ -20,20 +22,23 @@ const passwordRegExp =
 
 const Join = () => {
   const navigate = useNavigate();
+  const [userImgId, setUserImgId] = useState<number>(0);
   const [userInfo, setUserInfo] = useState<UserInfo>({
+    profilePicture: "./assets/join/profile.png",
     nickname: "",
     email: "",
     password: "",
     pwConfirm: "",
+    selfIntroduction: "",
   });
-
   const CheckAll = useCallback(() => {
-    const { nickname, email, password, pwConfirm } = userInfo;
+    const { nickname, email, password, pwConfirm, selfIntroduction } = userInfo;
     if (
-      nickname.length > 2 &&
+      nickname.length >= 2 &&
       emailRegExp.test(email) &&
       passwordRegExp.test(password) &&
-      pwConfirm === password
+      pwConfirm === password &&
+      selfIntroduction.length >= 2
     )
       return false;
     return true;
@@ -57,6 +62,8 @@ const Join = () => {
         value !== userInfo.password
       )
         return true;
+      if (type === "selfIntroduction" && value.length > 0 && value.length < 2)
+        return true;
 
       return false;
     },
@@ -66,38 +73,77 @@ const Join = () => {
   const onChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       const type = event.currentTarget.dataset.type;
-      const value = event.target.value;
+
       if (type) {
+        const value = event.target.value;
         const clone = Object.assign({}, userInfo);
-        clone[type] = value;
-        setUserInfo(clone);
+        if (type === "profilePicture") {
+          if (event.target.files) {
+            axios
+              .post(
+                `${process.env.REACT_APP_API_URL}/image/user/upload`,
+                {
+                  images: event.target.files[0],
+                },
+                {
+                  headers: {
+                    "Content-Type": "multipart/form-data",
+                  },
+                }
+              )
+              .then((res) => {
+                if (res.data) {
+                  console.log(res.data);
+                  const { id, imageSrc } = res.data;
+                  clone[type] = imageSrc;
+                  setUserImgId(id);
+                  setUserInfo(clone);
+                  return;
+                }
+              })
+              .catch((error) => console.log(error));
+          }
+        } else {
+          clone[type] = value;
+          setUserInfo(clone);
+        }
       }
     },
     [userInfo]
   );
   const onJoin = useCallback(async () => {
     if (!CheckAll()) {
+      const { email, password, nickname, selfIntroduction } = userInfo;
+      const obj = {
+        email,
+        password,
+        nickname,
+        introduction: selfIntroduction,
+        userImgs: [
+          {
+            userImgId,
+          },
+        ],
+      };
       await axios
-        .post(`${process.env.REACT_APP_API_URL}/user/signup`, {
-          email: userInfo.email,
-          password: userInfo.password,
-          nickname: userInfo.nickname,
-        })
+        .post(`${process.env.REACT_APP_API_URL}/user/signup`, obj)
         .then((res) => {
           if (res.data.id) {
             navigate("/login");
+            console.log(res.data);
           }
         })
         .catch((error) => {
-          console.log(error.response.data);
           if (error.response.data.status === 1002) {
             showToast({ type: "error", message: "닉네임이 중복되었습니다." });
           } else if (error.response.data.status === 1001) {
             showToast({ type: "error", message: "이메일이 중복되었습니다." });
+          } else {
+            console.log(error.response.data);
           }
         });
     }
-  }, [userInfo.nickname, userInfo.email, userInfo.password, CheckAll]);
+  }, [userInfo, CheckAll, userImgId]);
   return (
     <JoinPage>
       <Header type="Login" />
@@ -123,15 +169,6 @@ const Join = () => {
           <JoinButton onClick={onJoin} disabled={CheckAll()}>
             회원가입하기
           </JoinButton>
-          <SocialTitleWrapper>
-            <Line />
-            <SocialTitle>social signup</SocialTitle>
-            <Line />
-          </SocialTitleWrapper>
-          <SocialContent>
-            <Social />
-            <Social />
-          </SocialContent>
         </Container>
       </Wrapper>
     </JoinPage>
@@ -141,6 +178,13 @@ const Join = () => {
 export default Join;
 
 const joinLayout = [
+  {
+    subtitle: "profilePicture",
+    placeholder: "이미지를 선택해주세요",
+    textType: "file",
+    errorMsg: "프로필 사진을 선택해주세요",
+  },
+
   {
     subtitle: "nickname",
     placeholder: "닉네임을 입력해주세요",
@@ -165,6 +209,12 @@ const joinLayout = [
     textType: "password",
     errorMsg: "비밀번호가 일치하지 않습니다",
   },
+  {
+    subtitle: "selfIntroduction",
+    placeholder: "자기소개를 입력해주세요",
+    textType: "text",
+    errorMsg: "자기소개를 2자이상 입력해주세요",
+  },
 ];
 
 const JoinPage = styled.div`
@@ -180,7 +230,7 @@ const Wrapper = styled.div`
 `;
 const Container = styled.div`
   width: 52.3rem;
-  height: 70rem;
+  height: 80rem;
   border-radius: 2.8rem;
   border: 0.1rem solid #b5b3b3;
   display: flex;
@@ -201,46 +251,10 @@ const JoinButton = styled.button`
   width: 100%;
   height: 4.8rem;
   border: unset;
-  /* background-color: #39bc56; */
   color: white;
   font-size: 1.8rem;
   font-weight: 700;
   border-radius: 1rem;
   cursor: pointer;
   background-color: ${(props) => (props.disabled ? "#d3d3d3" : "#39bc56")};
-`;
-const SocialTitleWrapper = styled.div`
-  width: 100%;
-  display: flex;
-  align-items: center;
-  padding-top: 1.5rem;
-`;
-const Line = styled.div`
-  height: 0;
-  width: 100%;
-  border: 0.1rem solid #d3d3d3;
-`;
-const SocialTitle = styled.div`
-  font-size: 1.6rem;
-  padding: 0rem 1rem;
-`;
-// const LoginNavWrapper = styled.div`
-//   font-size: 1.6rem;
-//   padding-top: 1.5rem;
-// `;
-// const LoginNav = styled.a`
-//   font-size: 1.6rem;
-//   padding-left: 0.5rem;
-//   cursor: pointer;
-//   text-decoration: underline;
-// `;
-const SocialContent = styled.div`
-  display: flex;
-  gap: 4.5rem;
-`;
-const Social = styled.div`
-  width: 5.6rem;
-  height: 5.6rem;
-  background-color: #d9d9d9;
-  border-radius: 50%;
 `;
