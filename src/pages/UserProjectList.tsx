@@ -5,37 +5,33 @@ import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 import { ProjectData } from "../interfaces/IProjectData";
 
-const fetchProjectData = async (userId: string) => {
-  try {
-    const response = await axios.get<ProjectData[]>(
-      `${process.env.REACT_APP_API_URL}/project/${userId}/projects`
-    );
-    console.log(response);
-    return response.data;
-  } catch (error) {
-    console.log("Error fetching projects: ", error);
-    return [];
-  }
-};
-
 function UserProjectList() {
   const [projects, setProjects] = useState<ProjectData[]>([]);
+  const [userIntro, setUserIntro] = useState<string>("");
   const [selectedProjectIdx, setSelectedProjectIdx] = useState<number | null>(
     null
   );
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
 
-  const params = useParams();
-  const userId = params.userId;
+  const { userId } = useParams();
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchProjects = async (userId: string) => {
-      const projectData = await fetchProjectData(userId);
-      setProjects(projectData);
+    const fetchProjectData = async (userId: string) => {
+      try {
+        const response = await axios.get<ProjectData[]>(
+          `${process.env.REACT_APP_API_URL}/project/${userId}/projects`
+        );
+        setProjects(response.data);
+        setUserIntro(
+          response.data[0]?.owner?.introduction ?? "소개글이 없습니다"
+        );
+      } catch (error) {
+        console.log("Error: ", error);
+      }
     };
     if (userId) {
-      fetchProjects(userId);
+      fetchProjectData(userId);
     }
   }, [userId]);
 
@@ -58,11 +54,11 @@ function UserProjectList() {
       <Header />
       <UserProfileWrapper>
         <UserProfileImg>프로필 사진</UserProfileImg>
-        <UserProfile>Contact To &rarr;</UserProfile>
+        <UserProfile>{userIntro}</UserProfile>
       </UserProfileWrapper>
 
       <ProjectCategoryWrapper>
-        {projects //
+        {projects
           .flatMap((project) => project.projectCategories)
           .filter(
             (category, index, self) =>
@@ -80,8 +76,8 @@ function UserProjectList() {
       </ProjectCategoryWrapper>
 
       <ProjectListWrapper>
-        {projects.length > 0 ? ( //
-          projects //
+        {projects.length > 0 ? (
+          projects
             .filter((project) =>
               selectedCategories.length === 0
                 ? true
@@ -221,7 +217,7 @@ const ProjectContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  perspective: 1000px;
+  /* perspective: 1000px; */
 `;
 
 // Card Front
