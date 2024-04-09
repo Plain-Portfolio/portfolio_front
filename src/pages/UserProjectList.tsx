@@ -2,40 +2,45 @@ import styled from "styled-components";
 import Header from "../components/Header/Header";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { ProjectData } from "../interfaces/IProjectData";
 
-const fetchProjectData = async (userId: string) => {
-  try {
-    const response = await axios.get<ProjectData[]>(
-      `${process.env.REACT_APP_API_URL}/project/${userId}/projects`
-    );
-    console.log(response);
-    return response.data;
-  } catch (error) {
-    console.log("Error fetching projects: ", error);
-    return [];
-  }
-};
-
 function UserProjectList() {
+  const { userId } = useParams();
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const [projects, setProjects] = useState<ProjectData[]>([]);
+  const [userData] = useState<{ intro: string; imgSrc: string }>({
+    intro: location.state?.intro ?? "소개글이 없습니다",
+    imgSrc: location.state?.imgSrc ?? "",
+  });
+  // console.log("userIntro: ", userIntro);
   const [selectedProjectIdx, setSelectedProjectIdx] = useState<number | null>(
     null
   );
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
 
-  const params = useParams();
-  const userId = params.userId;
-  const navigate = useNavigate();
-
   useEffect(() => {
-    const fetchProjects = async (userId: string) => {
-      const projectData = await fetchProjectData(userId);
-      setProjects(projectData);
+    const fetchProjectData = async (userId: string) => {
+      await axios
+        .get<ProjectData[]>(
+          `${process.env.REACT_APP_API_URL}/project/${userId}/projects`
+        )
+        .then((response) => {
+          setProjects(response.data);
+        })
+        .catch((error) => {
+          if (error.response.data.status === 1029) {
+            console.log(
+              "400 error :: 해당 유저의 프로젝트가 존재하지 않습니다"
+            );
+            setProjects([]);
+          }
+        });
     };
     if (userId) {
-      fetchProjects(userId);
+      fetchProjectData(userId);
     }
   }, [userId]);
 
@@ -57,12 +62,12 @@ function UserProjectList() {
     <UserProjectPage>
       <Header />
       <UserProfileWrapper>
-        <UserProfileImg>프로필 사진</UserProfileImg>
-        <UserProfile>Contact To &rarr;</UserProfile>
+        <UserProfileImg src={userData.imgSrc} />
+        <UserProfile>{userData.intro}</UserProfile>
       </UserProfileWrapper>
 
       <ProjectCategoryWrapper>
-        {projects //
+        {projects
           .flatMap((project) => project.projectCategories)
           .filter(
             (category, index, self) =>
@@ -80,8 +85,8 @@ function UserProjectList() {
       </ProjectCategoryWrapper>
 
       <ProjectListWrapper>
-        {projects.length > 0 ? ( //
-          projects //
+        {projects.length > 0 ? (
+          projects
             .filter((project) =>
               selectedCategories.length === 0
                 ? true
@@ -161,17 +166,15 @@ const UserProfileWrapper = styled.div`
   margin-bottom: 50px;
 `;
 
-const UserProfileImg = styled.div`
+const UserProfileImg = styled.img`
   display: flex;
   justify-content: center;
   align-items: center;
-  //
   width: 220px;
   height: 220px;
-  //
   overflow: hidden;
   border-radius: 30%;
-  background-color: #39bc56;
+  border: 1px solid #39bc56;
 `;
 
 const UserProfile = styled.div`
@@ -183,6 +186,7 @@ const UserProfile = styled.div`
   padding: 20px;
   border-radius: 20px;
   margin-top: 10px;
+  font-size: 15px;
 `;
 
 // Category
@@ -201,8 +205,8 @@ const CategoryButton = styled.div<{ active: number }>`
   padding: 10px;
   margin-right: 10px;
   border-radius: 40px;
-  border: 1px solid ${(props) => (props.active ? "#39bc56" : "#999")};
-  color: ${(props) => (props.active ? "#39bc56" : "#000")};
+  border: 1px solid ${(props) => (props.active ? "#39bc56" : "#d3d3d3")};
+  color: ${(props) => (props.active ? "#39bc56" : "#030303")};
   font-weight: ${(props) => (props.active ? "bold" : "normal")};
   &:hover {
     opacity: 0.7;
@@ -221,7 +225,7 @@ const ProjectContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  perspective: 1000px;
+  /* perspective: 1000px; */
 `;
 
 // Card Front

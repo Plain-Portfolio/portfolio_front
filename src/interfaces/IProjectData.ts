@@ -24,6 +24,7 @@ interface Owner {
   id: number;
   email: string;
   nickname: string;
+  introduction: string;
 }
 
 interface ProjectData {
@@ -32,7 +33,7 @@ interface ProjectData {
   description: string;
   githubLink: string;
   isTeamProject: boolean;
-  owner: Owner[];
+  owner: Owner;
   projectCategories: ProjectCategory[];
   projectImgs: ProjectImage[];
   comments: Comment[];
