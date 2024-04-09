@@ -2,21 +2,25 @@ import styled from "styled-components";
 import Header from "../components/Header/Header";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { ProjectData } from "../interfaces/IProjectData";
 
 function UserProjectList() {
+  const { userId } = useParams();
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const [projects, setProjects] = useState<ProjectData[]>([]);
-  const [userIntro, setUserIntro] = useState<string>("");
+  const [userData] = useState<{ intro: string; imgSrc: string }>({
+    intro: location.state?.intro ?? "소개글이 없습니다",
+    imgSrc: location.state?.imgSrc ?? "",
+  });
+  // console.log("userIntro: ", userIntro);
   const [selectedProjectIdx, setSelectedProjectIdx] = useState<number | null>(
     null
   );
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
 
-  const { userId } = useParams();
-  const navigate = useNavigate();
-
-  // memo지은: useLocation으로 Home에서 Intro 받아오는 방식으로 변경 예정
   useEffect(() => {
     const fetchProjectData = async (userId: string) => {
       await axios
@@ -25,9 +29,6 @@ function UserProjectList() {
         )
         .then((response) => {
           setProjects(response.data);
-          setUserIntro(
-            response.data[0]?.owner?.introduction ?? "소개글이 없습니다"
-          );
         })
         .catch((error) => {
           if (error.response.data.status === 1029) {
@@ -35,7 +36,6 @@ function UserProjectList() {
               "400 error :: 해당 유저의 프로젝트가 존재하지 않습니다"
             );
             setProjects([]);
-            setUserIntro("소개글을 가져올 수 없습니다");
           }
         });
     };
@@ -60,10 +60,10 @@ function UserProjectList() {
 
   return (
     <UserProjectPage>
-      <Header type="List" />
+      <Header />
       <UserProfileWrapper>
-        <UserProfileImg>프로필 사진</UserProfileImg>
-        <UserProfile>{userIntro}</UserProfile>
+        <UserProfileImg src={userData.imgSrc} />
+        <UserProfile>{userData.intro}</UserProfile>
       </UserProfileWrapper>
 
       <ProjectCategoryWrapper>
@@ -166,17 +166,15 @@ const UserProfileWrapper = styled.div`
   margin-bottom: 50px;
 `;
 
-const UserProfileImg = styled.div`
+const UserProfileImg = styled.img`
   display: flex;
   justify-content: center;
   align-items: center;
-  //
   width: 220px;
   height: 220px;
-  //
   overflow: hidden;
   border-radius: 30%;
-  background-color: #39bc56;
+  border: 1px solid #39bc56;
 `;
 
 const UserProfile = styled.div`
@@ -188,6 +186,7 @@ const UserProfile = styled.div`
   padding: 20px;
   border-radius: 20px;
   margin-top: 10px;
+  font-size: 15px;
 `;
 
 // Category
@@ -206,8 +205,8 @@ const CategoryButton = styled.div<{ active: number }>`
   padding: 10px;
   margin-right: 10px;
   border-radius: 40px;
-  border: 1px solid ${(props) => (props.active ? "#39bc56" : "#999")};
-  color: ${(props) => (props.active ? "#39bc56" : "#000")};
+  border: 1px solid ${(props) => (props.active ? "#39bc56" : "#d3d3d3")};
+  color: ${(props) => (props.active ? "#39bc56" : "#030303")};
   font-weight: ${(props) => (props.active ? "bold" : "normal")};
   &:hover {
     opacity: 0.7;

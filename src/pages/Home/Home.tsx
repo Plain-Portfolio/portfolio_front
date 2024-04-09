@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import styled from "styled-components";
 import axios from "axios";
 import Layout from "../../components/Layout/Layout";
+import { useNavigate } from "react-router-dom";
 
 type Props = {};
 
@@ -15,6 +16,8 @@ type UserType = {
 };
 const Home = (props: Props) => {
   const [userList, setUserList] = useState<UserType[]>([]);
+  const navigate = useNavigate();
+
   console.log(userList);
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -53,7 +56,21 @@ const Home = (props: Props) => {
 
                 <Nickname>{item.nickname}</Nickname>
                 <Introduction>{item.introduction}</Introduction>
-                <AllPortpolio>전체 포트폴리오 보기</AllPortpolio>
+                <AllPortpolio
+                  onClick={() =>
+                    navigate(`${item.id}/projects`, {
+                      state: {
+                        intro: item.introduction,
+                        imgSrc:
+                          item.userImgs.length > 0
+                            ? item.userImgs[0].imgSrc
+                            : null,
+                      },
+                    })
+                  }
+                >
+                  전체 포트폴리오 보기
+                </AllPortpolio>
               </ProfileContent>
             );
           })}

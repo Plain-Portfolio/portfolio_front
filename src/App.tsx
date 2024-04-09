@@ -15,6 +15,7 @@ import NotFound from "./components/Route/NotFound";
 import PrivateRoute from "./components/Route/PrivateRoute";
 import { AuthProvider } from "./components/AuthContext";
 import UserProjectList from "./pages/UserProjectList";
+import LikedList from "./pages/LikedList";
 
 const queryClient = new QueryClient();
 
@@ -32,6 +33,7 @@ function App() {
               <Route path="/login" element={<Login />} />
               <Route path="/read/:id" element={<Detail />} />
               <Route path="/:userId/projects" element={<UserProjectList />} />
+              <Route path="/likedList" element={<LikedList />} />
               <Route element={<PrivateRoute />}>
                 <Route path="/edit/:id" element={<Post />} />
                 <Route path="/post" element={<Post />} />
