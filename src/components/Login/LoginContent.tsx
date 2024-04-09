@@ -108,10 +108,11 @@ function LoginContent() {
   };
 
   async function socialLoginRedirect(kindOf: string) {
-    const res = await axios.get(
-      `${process.env.REACT_APP_API_URL}/user/login/${kindOf}`
-    );
-    window.location.href = res.data.url;
+    const REST_API_KEY = "fc5c868e6c8adc7e219e2a4f5b9334bc";
+    const REDIRECT_URI = "http://localhost:3000/user/login/kakao/callback";
+    const link = `https://kauth.kakao.com/oauth/authorize?client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}&response_type=code`;
+
+    window.location.href = link;
   }
 
   const handleSocialLogin = async (kindOf: string) => {

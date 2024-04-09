@@ -15,6 +15,7 @@ import NotFound from "./components/Route/NotFound";
 import PrivateRoute from "./components/Route/PrivateRoute";
 import { AuthProvider } from "./components/AuthContext";
 import UserProjectList from "./pages/UserProjectList";
+import Redirection from "./pages/Redirection";
 
 const queryClient = new QueryClient();
 
@@ -30,6 +31,10 @@ function App() {
               <Route path="/" element={<Home />} />
               <Route path="/join" element={<Join />} />
               <Route path="/login" element={<Login />} />
+              <Route
+                path="/user/login/kakao/callback"
+                element={<Redirection />}
+              />
               <Route path="/read/:id" element={<Detail />} />
               <Route path="/:userId/project" element={<UserProjectList />} />
               <Route element={<PrivateRoute />}>

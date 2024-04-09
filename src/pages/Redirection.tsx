@@ -6,23 +6,27 @@ type Props = {};
 
 const Redirection = (props: Props) => {
   const navigate = useNavigate();
+
   const { string } = useParams();
+
   const code = new URL(document.location.toString()).searchParams.get("code");
-  console.log(string, code);
+
   useEffect(() => {
+    console.log({ code: code });
     async function fetchCallback() {
       await axios
-        .post(
-          `${process.env.REACT_APP_API_URL}/user/login/${string}/callback`,
-          code
-        )
+        .post(`${process.env.REACT_APP_API_URL}/user/login/kakao/callback`, {
+          code: code,
+        })
         .then((r) => {
           console.log(r.data);
-          navigate("/");
-        });
+        })
+        .then(() => navigate("/"));
     }
-    //fetchCallback();
+    fetchCallback();
   }, []);
-  return <div>로그인 중입니다.</div>;
+
+  return <div>recirection</div>;
 };
+
 export default Redirection;
