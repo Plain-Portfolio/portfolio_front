@@ -1,22 +1,26 @@
 import styled from "styled-components";
-import LoginContent from "../components/Login/LoginContent";
+import LoginContent from "../../components/Login/LoginContent";
+import Layout from "../../components/Layout/Layout";
 
 export default function Login() {
   return (
-    <LoginContainer>
-      <LoginContent />
-      <LinkToJoin>
-        아직 회원이 아니신가요? <a href="/join">회원가입하러가기</a>
-      </LinkToJoin>
-    </LoginContainer>
+    <Layout>
+      <LoginContainer>
+        <LoginContent />
+        <LinkToJoin>
+          아직 회원이 아니신가요? <a href="/join">회원가입하러가기</a>
+        </LinkToJoin>
+      </LoginContainer>
+    </Layout>
   );
 }
 
-const LoginContainer = styled.main`
+const LoginContainer = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  margin-top: 6rem;
   min-height: 100vh;
 `;
 

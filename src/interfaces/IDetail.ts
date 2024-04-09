@@ -32,8 +32,19 @@ interface Ilike {
 }
 // memo지혜: 댓글 인터페이스
 interface Icomment {
-  id: number;
   context: string;
+  projectId?: number;
+  parentCommentOrderId: number | null;
+  commentOrder: number;
+  childCommentCount: number;
+  isDeleted?: boolean;
+}
+interface getComment extends Icomment {
+  id: number;
+  userDto: { userId: number; nickname: string };
+  project: {
+    id: number;
+  };
 }
 
-export type { Iproject, Icomment, Ilike, IgetMember };
+export type { Iproject, Icomment, Ilike, IgetMember, getComment };

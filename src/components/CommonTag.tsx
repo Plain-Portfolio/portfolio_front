@@ -2,8 +2,8 @@ import styled from "styled-components";
 
 const Input = styled.input`
   border-radius: 2.5rem;
-  border: 1px solid ${({ theme }) => theme.inputBorder};
-  background-color: ${({ theme }) => theme.inputColor};
+  border: 1px solid ${({ theme }) => theme.color.inputBorder};
+  background-color: ${({ theme }) => theme.color.inputColor};
   display: block;
   width: 100%;
   height: 4.8rem;
@@ -14,7 +14,8 @@ const Input = styled.input`
     border: 0.1rem solid black;
   }
 
-  ${({ disabled, theme }) => disabled && `background-color: ${theme.darkgray}`}
+  ${({ disabled, theme }) =>
+    disabled && `background-color: ${theme.color.darkgray}`}
 `;
 const Button = styled.input`
   font-weight: 900;
@@ -25,13 +26,13 @@ const Button = styled.input`
 `;
 const BorderButton = styled(Button)`
   background-color: white;
-  border: 0.2rem solid ${({ theme }) => theme.mainGreen};
+  border: 0.2rem solid ${({ theme }) => theme.color.mainGreen};
 `;
 const FillButton = styled(Button)`
   color: white;
-  background-color: ${({ theme }) => theme.mainGreen};
+  background-color: ${({ theme }) => theme.color.mainGreen};
   &:hover {
-    background-color: ${({ theme }) => theme.darkGreen};
+    background-color: ${({ theme }) => theme.color.darkGreen};
   }
 `;
 
@@ -59,14 +60,14 @@ const Item = styled.li<{ color?: string }>`
   border-radius: 2rem;
   margin-right: 0.8rem;
   padding: 0.5rem 1.5rem;
-  border: 1px solid ${({ theme }) => theme.darkgry};
+  border: 1px solid ${({ theme }) => theme.color.darkgry};
   line-height: 1.5rem;
   cursor: pointer;
 
   ${({ theme, color }) =>
     color &&
     `
-    background-color: ${theme[color]}; 
+    background-color: ${theme.color[color]}; 
     color: white;
   `}
 `;

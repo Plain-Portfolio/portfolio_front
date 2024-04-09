@@ -1,9 +1,9 @@
-const size = {
+const windowsize = {
   mobile: "767px",
   tablet: "1023px",
 };
 
-const theme = {
+const color = {
   mainGreen: "#39bc56",
   darkGreen: "#317840",
   inputColor: `rgba(211, 211, 211, 0.1)`,
@@ -12,5 +12,9 @@ const theme = {
   darkgray: "#b5b3b3",
 };
 
-export { size };
+const theme = {
+  size: windowsize,
+  color: color,
+};
+
 export default theme;

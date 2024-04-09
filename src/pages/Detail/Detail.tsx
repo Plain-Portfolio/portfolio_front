@@ -3,15 +3,16 @@ import { useNavigate, useParams } from "react-router-dom";
 import { Button, Container } from "../../components/CommonTag";
 import { SectionCol, SectionRow } from "../../components/SectionDirection";
 import Carousel from "../../components/Detail/Carousel";
-import { Icomment, Ilike, Iproject } from "../../interfaces/IDetail";
+import { Ilike, Iproject } from "../../interfaces/IDetail";
 import { HiHeart } from "react-icons/hi";
 import { HiOutlineHeart } from "react-icons/hi";
 import { getToken } from "../../utils/token";
 import { useProjectData } from "../../hooks/projecthooks";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import axios from "axios";
 import Layout from "../../components/Layout/Layout";
+import Comment from "../../components/Detail/Comment";
 import DetailSkeleton from "../../components/Skeleton/DetailSkeleton";
 
 // memo지혜 : 좋아요, 좋아요 취소 API
@@ -47,8 +48,6 @@ const Detail = () => {
 
   // memo지혜 : 프로젝트 상태관리
   const [project, setProject] = useState<Iproject>();
-  // memo지혜 : 댓글 상태관리
-  const [comment, setComment] = useState<Icomment[]>([]);
   // memo지혜 : 좋아요 상태관리
   const [liked, setLiked] = useState<boolean>(false);
 
@@ -60,8 +59,7 @@ const Detail = () => {
 
   useEffect(() => {
     if (data) {
-      const { comments, likes, ...projectInfo } = data;
-
+      const { likes, ...projectInfo } = data;
       //memo지혜: 게시물에 사용자가 좋아요를 했는지 확인하는 함수
       const isLiked = likes.some(
         (like: Ilike) => like.userId === Number(userId)
@@ -71,7 +69,6 @@ const Detail = () => {
         setLiked(isLiked);
       }
 
-      setComment(comments);
       setProject({ ...projectInfo, likes });
     }
   }, [data]);
@@ -131,34 +128,36 @@ const Detail = () => {
               <Carousel images={project ? project.projectImgs : []} />
               <LikeInfo>
                 <Ul>
-                  <Li>
+                  <Li color="white">
                     {liked ? (
                       <HiHeart size="32" color="#f00" onClick={handleLike} />
                     ) : (
                       <HiOutlineHeart size="32" onClick={handleLike} />
                     )}
-                    <span>{project?.likes.length}</span>
+                    <LikeCount>{project?.likes.length}</LikeCount>
                   </Li>
-                  <Li>
+                  <Li color="white">
                     <Author>{project?.owner.email}</Author>
                   </Li>
                 </Ul>
               </LikeInfo>
-              <Comment>댓글</Comment>
+              <Comment projectId={projectId} />
             </SectionLeft>
             <SectionRight>
               <ul>
                 <Li>
-                  <Badge>{project?.isTeamProject ? "팀" : "개인"}</Badge>
+                  <Badge background="white">
+                    {project?.isTeamProject ? "팀" : "개인"}
+                  </Badge>
                   {project?.isTeamProject &&
                     project.teamProjectMembers.map((member) => (
-                      <Badge>{member.userId}</Badge>
+                      <Badge key={member.userId}>{member.nickname}</Badge>
                     ))}
                 </Li>
                 <Li>
                   <label>카테고리</label>
                   {project?.projectCategories.map((category) => (
-                    <Badge>{category.name}</Badge>
+                    <Badge key={category.id}>{category.name}</Badge>
                   ))}
                 </Li>
                 <Li>
@@ -184,28 +183,12 @@ const ReadContainer = styled(Container)`
   margin: 14rem 0;
 `;
 
-const Badge = styled.span`
-  display: inline-block;
-  font-size: 1.2rem;
-  min-width: 4rem;
-  text-align: center;
-  border-radius: 1rem;
-  padding: 1rem;
-  color: white;
-  background-color: ${({ theme }) => theme.mainGreen};
-`;
-const Author = styled.span`
-  font-size: 1.2rem;
-  font-weight: 900;
-  line-height: 3rem;
-`;
 const ReadBorder = styled.div`
   width: 70%;
   height: 100%;
   padding: 4.9rem 4.7rem;
   border-radius: 2.5rem;
-  border: 1px solid ${({ theme }) => theme.darkgray};
-  background-color: ${({ theme }) => theme.lightgray};
+  border: 0.3rem solid ${({ theme }) => theme.color.darkGreen};
 `;
 const ButtonGruop = styled.div`
   display: flex;
@@ -216,25 +199,54 @@ const ButtonGruop = styled.div`
     margin-right: 1rem;
   }
 `;
-const CommonButton = styled(Button)`
-  flex-basis: 7rem;
-  padding: 1rem;
-  border: 0.3rem solid ${({ theme }) => theme.darkGreen};
-`;
-const UpdButton = styled(CommonButton)``;
-const DelButton = styled(CommonButton)``;
-
 const ReadTitle = styled.h1`
   font-size: 3.2rem;
   font-weight: 900;
   padding: 2rem;
-  background-color: white;
+  border-bottom: 0.2rem solid ${({ theme }) => theme.color.darkGreen};
 `;
 const ReadContent = styled(SectionRow)`
   padding: 5rem 0;
   height: 100%;
   justify-content: space-between;
 `;
+const Author = styled.span`
+  font-size: 1.2rem;
+  font-weight: 900;
+  line-height: 3rem;
+`;
+const Badge = styled.span<{ background?: string }>`
+  display: inline-block;
+  font-size: 1.3rem;
+  min-width: 4rem;
+  text-align: center;
+  border-radius: 1rem;
+  padding: 1rem;
+  color: white;
+  background-color: ${({ theme }) => theme.color.mainGreen};
+  line-height: 1.2rem;
+
+  ${({ background, theme }) =>
+    background &&
+    css`
+      background-color: ${background};
+      color: black;
+      border: 0.3rem solid ${theme.color.mainGreen};
+    `};
+
+  &:not(:last-child) {
+    margin-right: 0.3rem;
+  }
+`;
+const CommonButton = styled(Button)`
+  flex-basis: 7rem;
+  padding: 1rem;
+  border: 0.3rem solid ${({ theme }) => theme.color.darkGreen};
+  background-color: white;
+`;
+const UpdButton = styled(CommonButton)``;
+const DelButton = styled(CommonButton)``;
+
 const SectionLeft = styled(SectionCol)`
   flex-grow: 4;
   flex-basis: 40%;
@@ -249,32 +261,36 @@ const SectionRight = styled(SectionCol)`
   flex-basis: 60%;
   justify-content: flex-start;
   padding: 2rem;
-  background-color: white;
+  border-radius: 2rem;
+  border: 0.2rem solid ${({ theme }) => theme.color.darkgray};
 `;
 const LikeInfo = styled.div`
   flex-grow: 1;
-  background-color: white;
+  border-radius: 2rem;
+  background-color: ${({ theme }) => theme.color.mainGreen};
+`;
+const LikeCount = styled.span`
+  line-height: 3rem;
 `;
 const Ul = styled.ul`
   display: flex;
   justify-content: space-between;
-  background-color: white;
 `;
-const Li = styled.li`
+const Li = styled.li<{ color?: string }>`
   display: flex;
   margin: 1rem 0.8rem;
   font-size: 1.2rem;
 
+  ${({ color }) => color && `color: white;`}
+
   & > label {
-    font-size: 1.2rem;
+    font-size: 1.3rem;
     font-weight: 900;
-    flex-basis: 5rem;
+    flex-basis: 7rem;
     margin-right: 1rem;
   }
-`;
-
-const Comment = styled.div`
-  flex-grow: 6;
-  min-height: 20rem;
-  background-color: white;
+  & > span,
+  div {
+    font-size: 1.3rem;
+  }
 `;
