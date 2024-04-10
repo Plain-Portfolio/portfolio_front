@@ -6,11 +6,11 @@ type Props = { children: React.ReactNode };
 
 const Layout = (props: Props) => {
   return (
-    <div>
+    <>
       <Header />
-      <main>{props.children}</main>
+      <main style={{ height: "100%" }}>{props.children}</main>
       <Footer />
-    </div>
+    </>
   );
 };
 

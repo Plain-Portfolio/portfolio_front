@@ -1,6 +1,8 @@
 import React, { useCallback, useEffect, useState } from "react";
 import styled from "styled-components";
 import axios from "axios";
+import Layout from "../../components/Layout/Layout";
+import { useNavigate } from "react-router-dom";
 
 type Props = {};
 
@@ -14,10 +16,10 @@ type UserType = {
 };
 const Home = (props: Props) => {
   const [userList, setUserList] = useState<UserType[]>([]);
-  console.log(userList);
+  const navigate = useNavigate();
+
   useEffect(() => {
     const token = localStorage.getItem("token");
-    console.log(token);
     axios
       .get(`${process.env.REACT_APP_API_URL}/user/list`, {
         headers: {
@@ -28,33 +30,43 @@ const Home = (props: Props) => {
 
     return () => {};
   }, []);
-
+  console.log(userList);
   return (
-    <HomePage>
-      <ProfileWrapper>
-        {userList.map((item, idx) => {
-          return (
-            <ProfileContent key={idx}>
-              {item.userImgs.length > 0 ? (
-                <ProfileImg
-                  style={{ backgroundImage: `url(${item.userImgs[0].imgSrc})` }}
-                />
-              ) : (
-                <ProfileImg
-                  style={{
-                    backgroundImage: `url("./assets/join/profile.png")`,
-                  }}
-                />
-              )}
+    <Layout>
+      <HomePage>
+        <ProfileWrapper>
+          {userList.map((item, idx) => {
+            return (
+              <ProfileContent key={idx}>
+                {item.userImgs && item.userImgs.length > 0 ? (
+                  <ProfileImg
+                    style={{
+                      backgroundImage: `url(${item.userImgs[0].imgSrc})`,
+                    }}
+                  />
+                ) : (
+                  <ProfileImg
+                    style={{
+                      backgroundImage: `url("./assets/join/profile.png")`,
+                    }}
+                  />
+                )}
 
-              <Nickname>{item.nickname}</Nickname>
-              <Introduction>{item.introduction}</Introduction>
-              <AllPortpolio>전체 포트폴리오 보기</AllPortpolio>
-            </ProfileContent>
-          );
-        })}
-      </ProfileWrapper>
-    </HomePage>
+                <Nickname>{item.nickname}</Nickname>
+                <Introduction>{item.introduction}</Introduction>
+                <AllPortpolio
+                  onClick={() => {
+                    navigate(`/${item.id}/project`);
+                  }}
+                >
+                  전체 포트폴리오 보기
+                </AllPortpolio>
+              </ProfileContent>
+            );
+          })}
+        </ProfileWrapper>
+      </HomePage>
+    </Layout>
   );
 };
 
@@ -69,6 +81,8 @@ const ProfileWrapper = styled.div`
   align-items: center;
   height: 100%;
   gap: 15rem;
+  padding-top: 6.6rem;
+  height: 100%;
 `;
 const ProfileContent = styled.div`
   display: flex;

@@ -3,9 +3,9 @@ import { useContext, useEffect, useState } from "react";
 import styled from "styled-components";
 import { AuthContext } from "../AuthContext";
 
-type Props = { type: string };
+type Props = {};
 
-const Header = ({ type }: Props) => {
+const Header = (props: Props) => {
   const navigate = useNavigate();
 
   const { isLoggedIn, userInfo, logout } = useContext(AuthContext);
