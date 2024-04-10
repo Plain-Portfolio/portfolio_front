@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { ProjectData } from "../interfaces/IProjectData";
+import { HiHeart } from "react-icons/hi";
 
 function UserProjectList() {
   const { userId } = useParams();
@@ -61,30 +62,32 @@ function UserProjectList() {
   return (
     <UserProjectPage>
       <Header />
-      <UserProfileWrapper>
-        <UserProfileImg src={userData.imgSrc} />
-        <UserProfile>{userData.intro}</UserProfile>
-      </UserProfileWrapper>
+      <LeftWrapper>
+        <UserProfileContainer>
+          <UserProfileImg src={userData.imgSrc} />
+          <UserProfile>{userData.intro}</UserProfile>
+        </UserProfileContainer>
 
-      <ProjectCategoryWrapper>
-        {projects
-          .flatMap((project) => project.projectCategories)
-          .filter(
-            (category, index, self) =>
-              index === self.findIndex((c) => c.name === category.name)
-          )
-          .map((category, idx) => (
-            <CategoryButton
-              key={idx}
-              onClick={() => handleCategoryClick(category.name)}
-              active={selectedCategories.includes(category.name) ? 1 : 0}
-            >
-              {category.name}
-            </CategoryButton>
-          ))}
-      </ProjectCategoryWrapper>
+        <CategoryContainer>
+          {projects
+            .flatMap((project) => project.projectCategories)
+            .filter(
+              (category, index, self) =>
+                index === self.findIndex((c) => c.name === category.name)
+            )
+            .map((category, idx) => (
+              <CategoryButton
+                key={idx}
+                onClick={() => handleCategoryClick(category.name)}
+                active={selectedCategories.includes(category.name) ? 1 : 0}
+              >
+                {category.name}
+              </CategoryButton>
+            ))}
+        </CategoryContainer>
+      </LeftWrapper>
 
-      <ProjectListWrapper>
+      <RightWrapper>
         {projects.length > 0 ? (
           projects
             .filter((project) =>
@@ -96,105 +99,92 @@ function UserProjectList() {
             )
             .map((project, idx) => {
               return (
-                <ProjectContainer
-                  key={idx}
-                  onClick={() => handleShowSummary(idx)}
-                >
-                  <CardFront
-                    style={{
-                      transform:
-                        selectedProjectIdx === idx
-                          ? "rotateY(-180deg)"
-                          : "rotateY(0deg)",
-                    }}
+                <>
+                  <ProjectContainer
+                    key={idx}
+                    onClick={() => handleShowSummary(idx)}
                   >
-                    <ProjectTitle>{project.title}</ProjectTitle>
                     <ProjectImg src={project.projectImgs[0].src} />
-                  </CardFront>
-                  <CardBack
-                    style={{
-                      transform:
-                        selectedProjectIdx === idx
-                          ? "rotateY(0deg)"
-                          : "rotateY(180deg)",
-                    }}
-                  >
-                    {selectedProjectIdx === idx && (
-                      <ProjectSummaryContainer>
-                        <ProjectSummary>{project.description}</ProjectSummary>
-                        {project.isTeamProject === true ? (
-                          <ProjectSummary>팀 프로젝트</ProjectSummary>
-                        ) : (
-                          <ProjectSummary>개인 프로젝트</ProjectSummary>
-                        )}
-                        <MoveToDetail
-                          onClick={() => navigate(`/read/${project.projectId}`)}
-                        >
-                          자세히 보기 &rarr;
-                        </MoveToDetail>
-                      </ProjectSummaryContainer>
-                    )}
-                  </CardBack>
-                </ProjectContainer>
+                    <ProjectSummaryContainer>
+                      <ProjectTitle
+                        onClick={() => navigate(`/read/${project.projectId}`)}
+                      >
+                        {project.title}
+                      </ProjectTitle>
+                      <ProjectDesc>{project.description}</ProjectDesc>
+                      <ProjectInfo>
+                        <LikeContainer>
+                          <HiHeart size="20" color="#f00" />
+                          <HeartNum>{project.likes.length}</HeartNum>
+                        </LikeContainer>
+                        <Category>
+                          {project.projectCategories.map((c, idx) => (
+                            <CButton key={idx}>{c.name}</CButton>
+                          ))}
+                        </Category>
+                      </ProjectInfo>
+                    </ProjectSummaryContainer>
+                  </ProjectContainer>
+                  <hr />
+                </>
               );
             })
         ) : (
           <ProjectContainer>아직 프로젝트가 없습니다...</ProjectContainer>
         )}
-      </ProjectListWrapper>
+      </RightWrapper>
     </UserProjectPage>
   );
 }
 
 export default UserProjectList;
 
+// 전체 Wrapper
 const UserProjectPage = styled.div`
-  height: auto;
-  display: flex;
-  flex-direction: column;
-  padding-top: 100px;
-  padding-bottom: 100px;
+  display: grid;
+  grid-template-columns: 1fr 5fr;
+  margin-top: 6rem;
 `;
 
-// User Info
-const UserProfileWrapper = styled.div`
+const LeftWrapper = styled.div`
+  margin-top: 0.5rem;
+`;
+
+// Left Wrapper 1) UserProfileContainer: UserProfileImg + UserProfile
+const UserProfileContainer = styled.div`
   display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-wrap: wrap;
-  padding: 20px;
-  margin-bottom: 50px;
+  flex-direction: column;
+  margin: 2rem;
 `;
 
 const UserProfileImg = styled.img`
-  display: flex;
+  /* display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: center; */
   width: 220px;
   height: 220px;
   overflow: hidden;
-  border-radius: 30%;
-  border: 1px solid #39bc56;
+  border-radius: 50%;
 `;
 
 const UserProfile = styled.div`
-  width: 500px; // auto
-  height: 200px; // auto
-  margin-left: 20px;
+  width: auto;
+  height: auto;
   background-color: #d3d3d3;
-  text-align: left;
-  padding: 20px;
-  border-radius: 20px;
-  margin-top: 10px;
-  font-size: 15px;
+  padding: 2rem;
+  margin-top: 2rem;
+  font-size: 1.3rem;
 `;
 
-// Category
-const ProjectCategoryWrapper = styled.div`
+// Left Wrapper 2) Category Container: Category Buttons
+const CategoryContainer = styled.div`
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  margin-top: 20px;
+  margin: 2rem;
+  padding: 2rem;
+
+  background-color: #d3d3d3;
 `;
 
 const CategoryButton = styled.div<{ active: number }>`
@@ -202,87 +192,90 @@ const CategoryButton = styled.div<{ active: number }>`
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  padding: 10px;
-  margin-right: 10px;
-  border-radius: 40px;
-  border: 1px solid ${(props) => (props.active ? "#39bc56" : "#d3d3d3")};
-  color: ${(props) => (props.active ? "#39bc56" : "#030303")};
+  padding: 1rem;
+  margin: 0.5rem;
+  border-radius: 5rem;
+  border: 1px solid ${(props) => (props.active ? "#39bc56" : "#7d7d7d")};
+  color: ${(props) => (props.active ? "#39bc56" : "#7d7d7d")};
   font-weight: ${(props) => (props.active ? "bold" : "normal")};
   &:hover {
     opacity: 0.7;
   }
 `;
 
-// Project List - CardFront + CardBack
-const ProjectListWrapper = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 15px;
-  padding: 10px;
-`;
+const RightWrapper = styled.div``;
 
+// Right Wrapper 1) all projects list container
 const ProjectContainer = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  /* perspective: 1000px; */
+  display: grid;
+  grid-template-columns: 1fr 3fr;
+  margin: 2rem;
+  /* background-color: #d3d3d3; */
 `;
 
-// Card Front
-const CardFront = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  width: 400px;
-  height: 300px;
-  background-color: #d3d3d3;
-  padding: 10px;
-  border-radius: 15px;
-
-  backface-visibility: hidden;
-  transition: transform 0.5s ease;
-  transform-style: preserve-3d;
-  cursor: pointer;
-`;
-
-const ProjectTitle = styled.div`
-  text-align: center;
-  padding: 10px;
-`;
-
+// 1-1) img box
 const ProjectImg = styled.img`
-  width: 100%;
-  height: 90%;
+  align-self: center;
+  width: 25rem;
+  height: 20rem;
   object-fit: contain;
 `;
 
-// Card Back
-const CardBack = styled.div`
-  backface-visibility: hidden;
-  transition: transform 0.5s ease;
-  transform-style: preserve-3d;
-  position: absolute;
-`;
-
+// 1-2) Summary Container: title + desc + info(like+c.g)
 const ProjectSummaryContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  padding: 10px;
-  width: 400px;
-  height: 300px;
-  background-color: #39bc56;
-  border-radius: 15px;
+  display: grid;
+  padding: 2rem;
 `;
 
-const ProjectSummary = styled.span`
-  margin: 10px;
-`;
-
-const MoveToDetail = styled.span`
-  padding: 10px;
-  margin-top: auto;
-  align-self: center;
+const ProjectTitle = styled.div`
+  padding: 1rem;
   font-weight: bold;
   cursor: pointer;
+  &:hover {
+    text-decoration: underline;
+    color: #39bc56;
+  }
+`;
+
+const ProjectDesc = styled.pre`
+  padding-left: 1rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-height: 2;
+`;
+
+// 1-3) <LikeContainer> + <Category>
+const ProjectInfo = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-top: 5rem;
+`;
+
+const LikeContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  margin-left: 1rem;
+`;
+
+const HeartNum = styled.span`
+  padding: 0.5rem;
+`;
+
+const Category = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  margin-left: auto;
+`;
+
+const CButton = styled.div`
+  padding: 1rem;
+  margin-left: 1rem;
+  border-radius: 5rem;
+  border: 1px solid #2c2c2c;
+  white-space: nowrap;
 `;
