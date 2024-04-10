@@ -4,7 +4,7 @@ import { useContext, useEffect, useMemo, useRef, useState } from "react";
 import CommentInput from "./CommentInput";
 import { useCommentData } from "../../hooks/commenthooks";
 import { Input } from "../CommonTag";
-import { AuthContext } from "../AuthContext";
+import { AuthContext } from "../Context/AuthContext";
 
 type Props = { projectId: string | undefined };
 

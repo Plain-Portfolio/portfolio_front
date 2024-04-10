@@ -117,7 +117,6 @@ const Post = () => {
       !description ||
       !githubLink ||
       projectCategories.length < 1 ||
-      imageFiles.length < 1 ||
       (isTeamProject && teamProjectMembers.length < 1)
     ) {
       alert("모든 입력창에 값을 넣어주세요.");

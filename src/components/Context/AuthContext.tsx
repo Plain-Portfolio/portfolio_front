@@ -1,6 +1,6 @@
 import React, { createContext, useEffect, useState } from "react";
-import { LoginResponse } from "../interfaces/IUser";
-import { getToken } from "../utils/token";
+import { LoginResponse } from "../../interfaces/IUser";
+import { getToken } from "../../utils/token";
 
 const AuthContext = createContext({
   isLoggedIn: !!getToken(),

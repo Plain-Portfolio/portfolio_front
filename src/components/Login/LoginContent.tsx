@@ -9,8 +9,9 @@ import { LoginResponse, User } from "../../interfaces/IUser";
 import axios, { AxiosResponse } from "axios";
 import { useNavigate } from "react-router-dom";
 import { useCallback, useContext, useEffect } from "react";
-import { AuthContext } from "../AuthContext";
+import { AuthContext } from "../Context/AuthContext";
 import { showToast } from "../../styles/Toast";
+// import NaverLogin from "./NaverLogin";
 
 type ErrorCodesType = {
   [key in number]: string;
@@ -35,11 +36,13 @@ const loginSchema = yup.object({
       "이메일 형식을 맞춰서 입력해주세요."
     )
     .required("이메일을 입력해주세요."),
-  password: yup.string().required("비밀번호를 입력해주세요."),
-  // .matches(
-  //   /^(?=.?[A-Z])(?=.?[a-z])(?=.?[0-9])(?=.?[#?!@$ %^&*-]).{10,}$/,
-  //   "비밀번호는 10자 이상이어야 하며, 영문 대문자, 숫자, 특수문자를 각각 1개 이상 포함해야 합니다."
-  // ),
+  password: yup
+    .string()
+    .required("비밀번호를 입력해주세요.")
+    .matches(
+      /^(?=.?[A-Z])(?=.?[a-z])(?=.?[0-9])(?=.?[#?!@$ %^&*-]).{10,}$/,
+      "비밀번호는 10자 이상이어야 하며, 영문 대문자, 숫자, 특수문자를 각각 1개 이상 포함해야 합니다."
+    ),
 });
 
 const loginMutation = async (data: User) => {
@@ -107,11 +110,12 @@ function LoginContent() {
     mutate(data);
   };
   async function handleSocialNaver() {
+    // const link = `https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=CxtDFeqMnHFuBrnPCZKo&state=abcdef123456&redirect_uri=http://localhost:3000/user/login/naver/callback`;
     // window.location.href = link;
   }
 
   async function handleSocialKakao() {
-    const link = `https://kauth.kakao.com/oauth/authorize?client_id=${process.env.REST_KAKAO_API_KEY}&redirect_uri=${process.env.REDIRECT_KAKAO_URI}&response_type=code`;
+    const link = `https://kauth.kakao.com/oauth/authorize?client_id=${process.env.REACT_APP_REST_KAKAO_API_KEY}&redirect_uri=${process.env.REACT_APP_REDIRECT_KAKAO_URI}&response_type=code`;
     window.location.href = link;
   }
 
@@ -143,11 +147,12 @@ function LoginContent() {
         <Horizontal />
         <LoginTitle $social>social login</LoginTitle>
         <SocialIcons>
-          <SocialIcon
+          {/* <NaverLogin /> */}
+          {/* <SocialIcon
             onClick={handleSocialNaver}
             src="assets/login/naver_login.png"
             alt="naver"
-          />
+          /> */}
           <SocialIcon
             onClick={handleSocialKakao}
             src="assets/login/kakao_login.png"
