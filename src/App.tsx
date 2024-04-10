@@ -1,25 +1,62 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { Route, Routes } from "react-router-dom";
+import Join from "./pages/Join/Join";
+import Login from "./pages/Login/Login";
+import Home from "./pages/Home/Home";
+import { BrowserRouter } from "react-router-dom";
+import { ThemeProvider } from "styled-components";
+import theme from "./styles/theme";
+import GlobalStyles from "./styles/GlobalStyels";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import CustomToast from "./components/CustomToast";
+import "react-toastify/dist/ReactToastify.min.css";
+import Post from "./pages/Post/Post";
+import Detail from "./pages/Detail/Detail";
+import NotFound from "./components/Route/NotFound";
+import PrivateRoute from "./components/Route/PrivateRoute";
+import { AuthProvider } from "./components/Context/AuthContext";
+import UserProjectList from "./pages/UserProjectList";
+import Redirection from "./pages/Redirection";
+import LikedList from "./pages/LikedList";
+// import NaverRedirection from "./pages/NaverRedirection";
+// import { NaverLoginProvider } from "./components/Context/NaverLoginContext";
+
+const queryClient = new QueryClient();
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <ThemeProvider theme={theme}>
+      <GlobalStyles />
+      <CustomToast />
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider>
+          {/* <NaverLoginProvider> */}
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/join" element={<Join />} />
+              <Route path="/login" element={<Login />} />
+              <Route
+                path="/user/login/kakao/callback"
+                element={<Redirection />}
+              />
+              {/* <Route
+                  path="/user/login/naver/callback"
+                  element={<NaverRedirection />}
+                /> */}
+              <Route path="/read/:id" element={<Detail />} />
+              <Route path="/:userId/projects" element={<UserProjectList />} />
+              <Route path="/likedList" element={<LikedList />} />
+              <Route element={<PrivateRoute />}>
+                <Route path="/edit/:id" element={<Post />} />
+                <Route path="/post" element={<Post />} />
+              </Route>
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+          {/* </NaverLoginProvider> */}
+        </AuthProvider>
+      </QueryClientProvider>
+    </ThemeProvider>
   );
 }
 
