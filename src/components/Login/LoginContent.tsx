@@ -106,18 +106,14 @@ function LoginContent() {
   const onSubmit = (data: User) => {
     mutate(data);
   };
-
-  async function socialLoginRedirect(kindOf: string) {
-    const REST_API_KEY = "fc5c868e6c8adc7e219e2a4f5b9334bc";
-    const REDIRECT_URI = `${process.env.REACT_APP_API_URL}/user/login/kakao/callback`;
-    const link = `https://kauth.kakao.com/oauth/authorize?client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}&response_type=code`;
-
-    window.location.href = link;
+  async function handleSocialNaver() {
+    // window.location.href = link;
   }
 
-  const handleSocialLogin = async (kindOf: string) => {
-    await socialLoginRedirect(kindOf);
-  };
+  async function handleSocialKakao() {
+    const link = `https://kauth.kakao.com/oauth/authorize?client_id=${process.env.REST_KAKAO_API_KEY}&redirect_uri=${process.env.REDIRECT_KAKAO_URI}&response_type=code`;
+    window.location.href = link;
+  }
 
   return (
     <LoginForm onSubmit={handleSubmit(onSubmit)}>
@@ -148,14 +144,14 @@ function LoginContent() {
         <LoginTitle $social>social login</LoginTitle>
         <SocialIcons>
           <SocialIcon
-            onClick={() => handleSocialLogin("google")}
-            src="/google-icon.png"
-            alt="google"
+            onClick={handleSocialNaver}
+            src="assets/login/naver_login.png"
+            alt="naver"
           />
           <SocialIcon
-            onClick={() => handleSocialLogin("kakao")}
-            src="/kakao-icon.png"
-            alt="kakao"
+            onClick={handleSocialKakao}
+            src="assets/login/kakao_login.png"
+            alt="kakaoLogo"
           />
         </SocialIcons>
       </SocialLogin>
@@ -209,13 +205,14 @@ const SocialLogin = styled.div`
 const SocialIcons = styled.div`
   display: flex;
   justify-content: space-around;
-  backgroud
 `;
 
 const SocialIcon = styled.img`
-  width: 5.6rem;
-  height: 5.6rem;
-  border-radius: 3rem;
+  width: 11rem;
+  height: auto;
+  object-fit: cover;
+  overflow: hidden;
+  border-radius: 5rem;
 `;
 
 const Horizontal = styled.hr`
