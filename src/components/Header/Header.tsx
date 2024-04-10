@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useContext, useEffect, useState } from "react";
 import styled from "styled-components";
-import { AuthContext, UserInfo } from "../AuthContext";
+import { AuthContext, UserInfo } from "../Context/AuthContext";
 import { showToast } from "../../styles/Toast";
 
 type Props = {};
