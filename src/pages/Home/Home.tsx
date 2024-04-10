@@ -91,6 +91,8 @@ const ProfileWrapper = styled.div`
   align-items: center;
   height: 100%;
   gap: 15rem;
+  padding-top: 6.6rem;
+  height: 100%;
 `;
 const ProfileContent = styled.div`
   display: flex;
