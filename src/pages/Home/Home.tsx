@@ -30,7 +30,6 @@ const Home = (props: Props) => {
 
     return () => {};
   }, []);
-  console.log(userList);
   return (
     <Layout>
       <HomePage>
@@ -89,7 +88,10 @@ const ProfileContent = styled.div`
   flex-direction: column;
   gap: 1.2rem;
   align-items: center;
+  gap: 1.2rem;
+  align-items: center;
 `;
+
 const ProfileImg = styled.div`
   width: 20rem;
   height: 20rem;
@@ -113,6 +115,8 @@ const Introduction = styled.div`
   border-radius: 1rem;
   text-align: center;
   padding: 0.5rem;
+  text-align: center;
+  padding: 0.5rem;
   box-sizing: border-box;
   position: relative;
   overflow: hidden;
@@ -130,5 +134,4 @@ const Imgwrapper = styled.div`
 `;
 const AllPortpolio = styled.div`
   font-size: 1.6rem;
-  cursor: pointer;
 `;
