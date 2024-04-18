@@ -15,10 +15,8 @@ import NotFound from "./components/Route/NotFound";
 import PrivateRoute from "./components/Route/PrivateRoute";
 import { AuthProvider } from "./components/Context/AuthContext";
 import UserProjectList from "./pages/UserProjectList";
-import Redirection from "./pages/Redirection";
+import KakaoRedirection from "./pages/KakaoRedirection";
 import LikedList from "./pages/LikedList";
-// import NaverRedirection from "./pages/NaverRedirection";
-// import { NaverLoginProvider } from "./components/Context/NaverLoginContext";
 
 const queryClient = new QueryClient();
 
@@ -29,7 +27,6 @@ function App() {
       <CustomToast />
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
-          {/* <NaverLoginProvider> */}
           <BrowserRouter>
             <Routes>
               <Route path="/" element={<Home />} />
@@ -37,12 +34,8 @@ function App() {
               <Route path="/login" element={<Login />} />
               <Route
                 path="/user/login/kakao/callback"
-                element={<Redirection />}
+                element={<KakaoRedirection />}
               />
-              {/* <Route
-                  path="/user/login/naver/callback"
-                  element={<NaverRedirection />}
-                /> */}
               <Route path="/read/:id" element={<Detail />} />
               <Route path="/:userId/projects" element={<UserProjectList />} />
               <Route path="/likedList" element={<LikedList />} />
@@ -53,7 +46,6 @@ function App() {
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
-          {/* </NaverLoginProvider> */}
         </AuthProvider>
       </QueryClientProvider>
     </ThemeProvider>

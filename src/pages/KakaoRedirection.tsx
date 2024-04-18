@@ -1,12 +1,13 @@
-import axios from "axios";
 import { useContext, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import Layout from "../components/Layout/Layout";
 import { AuthContext } from "../components/Context/AuthContext";
+import { showToast } from "../styles/Toast";
 
 type Props = {};
 
-const Redirection = (props: Props) => {
+const KakaoRedirection = (props: Props) => {
   const navigate = useNavigate();
   const { login } = useContext(AuthContext);
 
@@ -15,7 +16,7 @@ const Redirection = (props: Props) => {
   ) as string;
 
   useEffect(() => {
-    console.log({ code: code });
+    // console.log({ code: code });
     async function handleKakaoLogin(code: string) {
       try {
         const response = await axios.post(
@@ -40,35 +41,41 @@ const Redirection = (props: Props) => {
               },
             }
           );
-
           const { profile } = userResponse.data.kakao_account;
-
           const { nickname, email } = profile;
-          console.log(profile, nickname, email);
 
           const postData = {
             nickname,
             email,
           };
 
-          const res = await axios
-            .post(
+          try {
+            const res = await axios.post(
               `${process.env.REACT_APP_API_URL}/user/login/kakao/callback`,
               postData
-            )
-            .then((res) => {
-              const data = res.data;
-
-              login({
-                token: data.token,
-                user: {
-                  userId: String(data.userId),
-                  email: data.email,
-                  nickname: data.nickname,
-                },
-              });
-              navigate("/");
+            );
+            const data = res.data;
+            login({
+              token: data.token,
+              user: {
+                userId: String(data.userId),
+                email: data.email,
+                nickname: data.nickname,
+              },
             });
+
+            showToast({
+              type: "success",
+              message: "로그인 성공했습니다.",
+            });
+
+            navigate("/");
+          } catch (error) {
+            showToast({
+              type: "error",
+              message: "로그인 실패했습니다.",
+            });
+          }
         }
       } catch (error) {
         console.error("Error during Kakao login:", error);
@@ -85,4 +92,4 @@ const Redirection = (props: Props) => {
   );
 };
 
-export default Redirection;
+export default KakaoRedirection;
