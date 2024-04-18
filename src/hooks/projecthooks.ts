@@ -13,11 +13,11 @@ const fetchProject = async (projectId: string) => {
 
 const deleteProject = async (projectId: string) => {
   const res = await axios.delete(
-    `${process.env.REACT_APP_API_URL}/project/${projectId}`,
+    `${process.env.REACT_APP_API_URL}/project/delete`,
     {
+      data: { projectId: Number(projectId) },
       headers: {
-        "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "*",
+        Authorization: `${getToken()}`,
       },
     }
   );
