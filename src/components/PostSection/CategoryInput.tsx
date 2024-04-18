@@ -8,6 +8,7 @@ import { Icategory } from "../../interfaces/IPost";
 import { getToken } from "../../utils/token";
 import styled from "styled-components";
 import axios from "axios";
+import { showToast } from "../../styles/Toast";
 
 type Props = {
   onChangeCategory: (categories: Icategory[]) => void;
@@ -62,6 +63,13 @@ const CategoryInput = ({ onChangeCategory, defaultCategories }: Props) => {
 
   // memo지혜: 카테고리 선택
   function selectCategory(categoryId: number, categoryName: string) {
+    if (selectedCategories.some((c) => c.id === categoryId)) {
+      showToast({
+        type: "warning",
+        message: "중복된 카테고리를 선택할 수 없습니다.",
+      });
+      return;
+    }
     setSelectedCategories((prev) => [
       ...prev,
       { id: categoryId, name: categoryName },

@@ -18,7 +18,7 @@ const Input = styled.input`
     disabled && `background-color: ${theme.color.darkgray}`}
 `;
 const Button = styled.input`
-  font-weight: 900;
+  font-weight: 700;
   cursor: pointer;
   flex-basis: 10rem;
   border-radius: 1.5rem;

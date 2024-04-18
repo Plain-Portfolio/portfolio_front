@@ -68,7 +68,6 @@ const Detail = () => {
       if (isLiked) {
         setLiked(isLiked);
       }
-
       setProject({ ...projectInfo, likes });
     }
   }, [data]);
@@ -212,7 +211,7 @@ const ReadContent = styled(SectionRow)`
 `;
 const Author = styled.span`
   font-size: 1.2rem;
-  font-weight: 900;
+  font-weight: 700;
   line-height: 3rem;
 `;
 const Badge = styled.span<{ background?: string }>`
@@ -285,7 +284,7 @@ const Li = styled.li<{ color?: string }>`
 
   & > label {
     font-size: 1.3rem;
-    font-weight: 900;
+    font-weight: 700;
     flex-basis: 7rem;
     margin-right: 1rem;
   }
