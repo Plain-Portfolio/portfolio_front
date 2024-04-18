@@ -1,9 +1,9 @@
 import { useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import Layout from "../components/Layout/Layout";
-import { AuthContext } from "../components/Context/AuthContext";
-import { showToast } from "../styles/Toast";
+import Layout from "../../components/Layout/Layout";
+import { AuthContext } from "../../components/Context/AuthContext";
+import { showToast } from "../../styles/Toast";
 
 type Props = {};
 

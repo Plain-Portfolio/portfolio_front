@@ -14,9 +14,9 @@ import Detail from "./pages/Detail/Detail";
 import NotFound from "./components/Route/NotFound";
 import PrivateRoute from "./components/Route/PrivateRoute";
 import { AuthProvider } from "./components/Context/AuthContext";
-import UserProjectList from "./pages/UserProjectList";
-import KakaoRedirection from "./pages/KakaoRedirection";
-import LikedList from "./pages/LikedList";
+import UserProjectList from "./pages/UserProjectList/UserProjectList";
+import KakaoRedirection from "./pages/Redirction/KakaoRedirection";
+import LikedList from "./pages/LikedList/LikedList";
 
 const queryClient = new QueryClient();
 
