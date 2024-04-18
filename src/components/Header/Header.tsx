@@ -19,6 +19,7 @@ const Header = (props: Props) => {
   const handleLogout = () => {
     logout();
     showToast({ type: "success", message: "로그아웃 성공하였습니다." });
+    onNavigate("/");
   };
 
   useEffect(() => {
@@ -34,7 +35,13 @@ const Header = (props: Props) => {
       </Logowrapper>
       {localIsLoggedIn ? (
         <Logowrapper>
-          {localUser && <UserEmail>{localUser.user.email}</UserEmail>}
+          {localUser && (
+            <UserEmail>
+              {localUser.user.email != "null"
+                ? localUser.user.email
+                : localUser.user.nickname}
+            </UserEmail>
+          )}
           <PostLink onClick={() => onNavigate("/post")}>글쓰기</PostLink>
           <Login onClick={handleLogout}>Logout</Login>
         </Logowrapper>
@@ -65,6 +72,7 @@ const Logowrapper = styled.div`
   display: flex;
   gap: 1rem;
   align-items: center;
+  cursor: pointer;
 `;
 const LogoThin = styled.div`
   font-weight: 300;

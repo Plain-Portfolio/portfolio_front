@@ -217,7 +217,7 @@ const ImagePreviewBoard = styled.div`
 
   & > label {
     position: absolute;
-    font-weight: 900;
+    font-weight: 700;
   }
   & > p {
     margin-top: 3.5rem;

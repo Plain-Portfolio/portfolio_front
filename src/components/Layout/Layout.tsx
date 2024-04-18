@@ -8,7 +8,9 @@ const Layout = (props: Props) => {
   return (
     <>
       <Header />
-      <main style={{ height: "100%" }}>{props.children}</main>
+      <main style={{ minHeight: "calc(100vh - 6.6rem)", paddingTop: "6.6rem" }}>
+        {props.children}
+      </main>
       <Footer />
     </>
   );

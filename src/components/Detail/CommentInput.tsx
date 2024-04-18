@@ -84,7 +84,9 @@ export default CommentInput;
 const Form = styled.form`
   display: flex;
 `;
-const CommentSubmitBtn = styled(FillButton)``;
+const CommentSubmitBtn = styled(FillButton)`
+  margin-left: 0.7rem;
+`;
 const CInput = styled(Input)`
   padding-right: 1rem;
   background-color: white;
