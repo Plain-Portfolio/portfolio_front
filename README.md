@@ -1,46 +1,35 @@
-# Getting Started with Create React App
+# 💻Portfolio ( 포트폴리오를 기록하는 공유 블로그)
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Portfolio는 개발자들이 자신의 프로젝트를 공유하고, 다른 개발자들과 소통하며, 서로의 역량을 인정하는 공간입니다.
 
-## Available Scripts
+## ✅ 배포 링크
 
-In the project directory, you can run:
+http://158.247.243.170:3000/
 
-### `npm start`
+## ✅ 서비스 주요 기능
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+0️⃣ 프로젝트 관리: 프로젝트 생성, 수정, 삭제, 상세 조회가 가능합니다.
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+1️⃣ 댓글 및 대댓글: 프로젝트에 대한 댓글과 대댓글을 작성하고 관리할 수 있습니다.
 
-### `npm test`
+2️⃣ 좋아요 기능: 마음에 드는 프로젝트에 좋아요를 표시할 수 있고, 좋아요한 프로젝트를 모아서 볼 수 있습니다.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+3️⃣ 유저별 프로젝트 조회: 유저가 작성한 프로젝트를 조회할 수 있습니다.
 
-### `npm run build`
+4️⃣ 카테고리별 프로젝트 조회: 사용자는 관심 있는 카테고리별로 프로젝트를 조회할 수 있습니다.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+5️⃣ 소셜 로그인: 네이버와 카카오 계정을 이용한 간편한 로그인이 가능합니다.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## ✅ 페이지 소개
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## ✅ 기술스택
 
-### `npm run eject`
+React, React Query, React Hook Form,
+Styled Component, Context API
+## ✅ 역할
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+| 이름   | 담당 업무                                                                                                                                       |
+| ------ | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| 박지혜 | 로그인 구현, 네이버/카카오 소셜로그인 <br> 프로젝트 생성,수정,삭제 <br> 프로젝트 상세조회 <br> 댓글, 대댓글 CRUD <br> 프로젝트 좋아요 추가,삭제 |
+| 서혜림 | 유저별 간단 정보 조회 (홈화면) <br> 회원가입                                                                                                    |
+| 이지은 | 좋아요한 프로젝트 조회 <br> 유저별 프로젝트 조회 <br> 카테고리별로 프로젝트 조회                                                                |
