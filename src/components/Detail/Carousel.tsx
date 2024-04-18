@@ -34,7 +34,7 @@ const Carousel = ({ images }: Props) => {
     <CarouselContainer>
       <CarouselTrack ref={slideRef}>
         {images.map((image: IprojectImgs, index) => (
-          <img key={index} src={image.imageSrc} alt={image.alt} />
+          <img key={index} src={image.src} alt={image.alt} />
         ))}
       </CarouselTrack>
       <CarouselPrev onClick={handlePrevClick}>

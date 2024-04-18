@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import Header from "../components/Header/Header";
+import Header from "../../components/Header/Header";
 import styled from "styled-components";
 
 interface LikedData {

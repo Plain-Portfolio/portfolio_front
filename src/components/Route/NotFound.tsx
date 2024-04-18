@@ -1,7 +1,9 @@
+import Layout from "../Layout/Layout";
+
 type Props = {};
 
 const NotFound = (props: Props) => {
-  return <div>NotFound</div>;
+  return <Layout>NotFound page</Layout>;
 };
 
 export default NotFound;

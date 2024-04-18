@@ -9,6 +9,7 @@ import { getToken } from "../../utils/token";
 import axios from "axios";
 import TagStyledList from "./TagStyledList";
 import { IgetMember } from "../../interfaces/IDetail";
+import { showToast } from "../../styles/Toast";
 
 type Props = {
   onChagneTeam: (isTeamProject: boolean, teamProjectMembers: Imember[]) => void;
@@ -45,10 +46,16 @@ const TeamInput = ({
     if (teamProj) {
       //memo지혜: 선택된 맴버일 경우 선택하지 못함.
       if (alreadySelected) {
-        alert(`이미 선택된 멤버입니다.`);
+        showToast({ type: "warning", message: `이미 선택된 멤버입니다.` });
         return;
       }
       setSelectedMembers([...selectedMembers, { id, nickname }]);
+    } else {
+      showToast({
+        type: "warning",
+        message: `개인은 팀원을 선택할 수 없습니다.`,
+      });
+      return;
     }
   };
 

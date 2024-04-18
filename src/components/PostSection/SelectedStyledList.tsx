@@ -34,7 +34,7 @@ export default StyledList;
 
 const DeleteButton = styled.span`
   padding-left: 1.5rem;
-  font-weight: bold;
+  font-weight: 700;
   cursor: pointer;
   font-size: 1.2rem;
 `;

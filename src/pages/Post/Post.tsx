@@ -21,6 +21,7 @@ import {
 import { Iproject } from "../../interfaces/IDetail";
 import { useProjectData } from "../../hooks/projecthooks";
 import styled from "styled-components";
+import { showToast } from "../../styles/Toast";
 
 const Post = () => {
   const userId = localStorage.getItem("user_id");
@@ -119,7 +120,7 @@ const Post = () => {
       projectCategories.length < 1 ||
       (isTeamProject && teamProjectMembers.length < 1)
     ) {
-      alert("모든 입력창에 값을 넣어주세요.");
+      showToast({ type: "warning", message: "모든 입력창에 값을 넣어주세요." });
       return;
     }
 
@@ -208,7 +209,7 @@ const Post = () => {
 };
 
 const PostContainer = styled(Container)`
-  margin: 14rem 0;
+  margin: 7rem 0;
 `;
 const PostForm = styled.form``;
 const PostContent = styled.div`

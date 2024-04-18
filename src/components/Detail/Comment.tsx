@@ -272,14 +272,14 @@ const CommentContainer = styled.div`
   border: 0.2rem solid ${({ theme }) => theme.color.darkgray};
 `;
 const H3 = styled.h3`
-  font-size: 1.7rem;
-  font-weight: 900;
-  padding: 1rem;
+  font-size: 1.4rem;
+  font-weight: 700;
+  padding: 1rem 0.5rem;
 `;
 const CommentList = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
+  justify-content: center;
   align-items: center;
   min-height: 8rem;
 `;

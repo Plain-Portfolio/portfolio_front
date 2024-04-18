@@ -1,9 +1,9 @@
 import styled from "styled-components";
-import Header from "../components/Header/Header";
+import Header from "../../components/Header/Header";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { ProjectData } from "../interfaces/IProjectData";
+import { ProjectData } from "../../interfaces/IProjectData";
 import { HiHeart } from "react-icons/hi";
 
 function UserProjectList() {

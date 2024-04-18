@@ -8,10 +8,22 @@ import { SectionCol } from "../SectionDirection";
 import { LoginResponse, User } from "../../interfaces/IUser";
 import axios, { AxiosResponse } from "axios";
 import { useNavigate } from "react-router-dom";
-import { useCallback, useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../Context/AuthContext";
 import { showToast } from "../../styles/Toast";
-// import NaverLogin from "./NaverLogin";
+
+const { naver } = window as any;
+
+const NAVER_CLIENT_ID = process.env.REACT_APP_REST_NAVER_API_KEY;
+const NAVER_CALLBACK_URL = process.env.REACT_APP_REDIRECT_NAVER_URI;
+
+const naverLogin = new naver.LoginWithNaverId({
+  clientId: NAVER_CLIENT_ID,
+  callbackUrl: NAVER_CALLBACK_URL,
+  isPopup: false,
+  loginButton: { color: "green", type: 2, height: 58 },
+  callbackHandle: true,
+});
 
 type ErrorCodesType = {
   [key in number]: string;
@@ -38,11 +50,11 @@ const loginSchema = yup.object({
     .required("이메일을 입력해주세요."),
   password: yup
     .string()
-    .required("비밀번호를 입력해주세요.")
-    .matches(
-      /^(?=.?[A-Z])(?=.?[a-z])(?=.?[0-9])(?=.?[#?!@$ %^&*-]).{10,}$/,
-      "비밀번호는 10자 이상이어야 하며, 영문 대문자, 숫자, 특수문자를 각각 1개 이상 포함해야 합니다."
-    ),
+    // .matches(
+    //   /^(?=.?[A-Z])(?=.?[a-z])(?=.?[0-9])(?=.?[#?!@$ %^&*-]).{10,}$/,
+    //   "비밀번호는 10자 이상이어야 하며, 영문 대문자, 숫자, 특수문자를 각각 1개 이상 포함해야 합니다."
+    // )
+    .required("비밀번호를 입력해주세요."),
 });
 
 const loginMutation = async (data: User) => {
@@ -58,8 +70,8 @@ const getErrorMessage = (code: number) => {
 };
 
 const useLogin = () => {
-  const { login } = useContext(AuthContext);
   const navigate = useNavigate();
+  const { login } = useContext(AuthContext);
 
   const handleLoginSuccess = (data: LoginResponse) => {
     login({
@@ -76,7 +88,6 @@ const useLogin = () => {
     mutationFn: loginMutation,
     onSuccess: (data: LoginResponse) => {
       handleLoginSuccess(data);
-
       showToast({
         type: "success",
         message: "로그인 성공했습니다.",
@@ -98,26 +109,85 @@ function LoginContent() {
   const {
     register,
     handleSubmit,
-    formState: { isSubmitting, isSubmitted, errors, isValid },
+    formState: { errors },
   } = useForm<User>({
     mode: "onChange",
     resolver: yupResolver(loginSchema),
   });
 
+  const navigate = useNavigate();
   const { mutate } = useLogin();
-
+  const { login } = useContext(AuthContext);
+  const [accessToken, setAcessToken] = useState<any>();
   const onSubmit = (data: User) => {
     mutate(data);
   };
-  async function handleSocialNaver() {
-    // const link = `https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=CxtDFeqMnHFuBrnPCZKo&state=abcdef123456&redirect_uri=http://localhost:3000/user/login/naver/callback`;
-    // window.location.href = link;
-  }
 
   async function handleSocialKakao() {
     const link = `https://kauth.kakao.com/oauth/authorize?client_id=${process.env.REACT_APP_REST_KAKAO_API_KEY}&redirect_uri=${process.env.REACT_APP_REDIRECT_KAKAO_URI}&response_type=code`;
     window.location.href = link;
   }
+
+  const userAccessToken = () => {
+    setAcessToken(window.location.href.includes("access_token") && getToken());
+  };
+
+  const getUser = async () => {
+    await naverLogin?.getLoginStatus(async (status: boolean) => {
+      // console.log(status);
+      if (status) {
+        const userEmail = naverLogin.user.getEmail();
+        const username = naverLogin.user.getNickName();
+        console.log(naverLogin);
+        // console.log({ email: userEmail, nickname: username ? username : null });
+        if (userEmail || username) {
+          try {
+            const res = await axios.post(
+              `${process.env.REACT_APP_API_URL}/user/login/naver/callback`,
+              { email: userEmail, nickname: username ? username : null }
+            );
+            const { data } = res;
+            login({
+              token: data.token,
+              user: {
+                userId: data.userId,
+                email: data.email,
+                nickname: data.nickname,
+              },
+            });
+            showToast({
+              type: "success",
+              message: "로그인 성공했습니다.",
+            });
+            navigate("/");
+          } catch (error) {
+            showToast({
+              type: "error",
+              message: "로그인 실패했습니다.",
+            });
+          }
+        }
+      }
+    });
+  };
+
+  const getToken = () => {
+    const t = window.location.href.split("=")[1].split("&")[0];
+    localStorage.setItem("accessToken", t);
+    return t;
+  };
+
+  useEffect(() => {
+    naverLogin.init();
+  }, []);
+
+  useEffect(() => {
+    userAccessToken();
+  }, [naverLogin]);
+
+  useEffect(() => {
+    if (naverLogin && accessToken) getUser();
+  }, [naverLogin, accessToken]);
 
   return (
     <LoginForm onSubmit={handleSubmit(onSubmit)}>
@@ -147,12 +217,7 @@ function LoginContent() {
         <Horizontal />
         <LoginTitle $social>social login</LoginTitle>
         <SocialIcons>
-          {/* <NaverLogin /> */}
-          {/* <SocialIcon
-            onClick={handleSocialNaver}
-            src="assets/login/naver_login.png"
-            alt="naver"
-          /> */}
+          <div id="naverIdLogin" />
           <SocialIcon
             onClick={handleSocialKakao}
             src="assets/login/kakao_login.png"
@@ -163,6 +228,8 @@ function LoginContent() {
     </LoginForm>
   );
 }
+export default LoginContent;
+
 const ValidationError = styled.p`
   height: 2.5rem;
   text-align: left;
@@ -218,6 +285,7 @@ const SocialIcon = styled.img`
   object-fit: cover;
   overflow: hidden;
   border-radius: 5rem;
+  cursor: pointer;
 `;
 
 const Horizontal = styled.hr`
@@ -252,5 +320,3 @@ const LoginButton = styled.button`
     transition: background 0.2s ease-in-out;
   }
 `;
-
-export default LoginContent;
